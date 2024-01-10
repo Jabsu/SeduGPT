@@ -11,13 +11,13 @@
 
 ### v0.3 — Pronssi
 - [ ] Refaktorointia, kommentointia
-- [ ] Käyttöliittymä uusiksi
-    📝 WhatsApp-tyylinen layout?
+- [ ] Käyttöliittymä uusiksi  
+    📝 WhatsApp-tyylinen layout?  
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Moduulikohtainen konfigurointi (frontend & backend)
     - [ ] json: import, export, defaults
-    - [ ] Asetusikkuna (modulaarisuus huomioiden)
-        📝 Määritellään moduulissa: Label, variablen nimi, oletusarvo, widget-tyyppi
+    - [ ] Asetusikkuna (modulaarisuus huomioiden)  
+        📝 Määritellään moduulissa: Label, variablen nimi, oletusarvo, widget-tyyppi  
         📝 Tuki useille asetuksille
 - [ ] Toinen moduuli: Sää
 - [ ] Mahdollisesti: Tkinter -> PySide
