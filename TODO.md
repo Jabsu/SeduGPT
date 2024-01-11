@@ -7,15 +7,20 @@
 
 ### v0.1 — Proof of Concept
 - [x] GUI-raakaversio 🤢
-- [ ] Ensimmäinen moduuli: Ruokalistat
+- [x] Ensimmäinen moduuli: Ruokalistat
+- [x] Modulaarisuusvalmistelua
+    - [x] Moduulien vakiofunktiot
+    - [x] main.py: Moduulien importtaus & initialisaatio (< config.py)
+    - [x] main.py: check_triggers-iterointi moduuli kerrallaan
 
 ### v0.3 — Pronssi
-- [ ] Refaktorointia, kommentointia
+- [ ] Modulaarisuusviimeistelyä
 - [ ] Käyttöliittymä uusiksi  
     📝 WhatsApp-tyylinen layout?  
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Moduulikohtainen konfigurointi (frontend & backend)
-    - [ ] json: import, export, defaults
+    - [ ] config.py -> settings.json
+    - [ ] import, export, defaults, exceptions
     - [ ] Asetusikkuna (modulaarisuus huomioiden)  
         📝 Määritellään moduulissa: Label, variablen nimi, oletusarvo, widget-tyyppi  
         📝 Tuki useille asetuksille

@@ -1,30 +1,89 @@
-import requests
+import importlib
 import re
+import os
 from datetime import datetime
 
+import requests
 from bs4 import BeautifulSoup as bs
 
-import config
+# placeholder (testailuun)
+try:
+    import config
+    campus = config.CAMPUS
+except ModuleNotFoundError:
+    campus = "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/"
 
-class Food:
+class Main:
 
-    def __init__(self, day=None):
+    def __init__(self, msg=None):
 
-        if not day:
-            self.get_day()
+        self.msg = msg
+        
+        # Regex-triggeri -> funktio
+        self.triggers = {
+            "r(uu|uo)aksi|ruoka|murkina|syödään|syömme|safka|pöperö": "start",
+        }
+
+        # Regex-flagit (re.I = ignore case, re.NOFLAG = ei flageja)
+        self.re_flags = re.I
+
+        # Palautettavan sisällön tyyppi 
+        self.return_type = "text"
+
+        # Moduulin tiedostonimi
+        self.name = self.get_module_name()
+
+  
+    def return_value(self):
+        '''Lopputuloksen palauttaminen.'''
+        
+        return self.menu
+    
+        
+    def check_triggers(self, msg):
+        '''Tutkitaan, sisältääkö käyttäjän viesti __initissä__ asetettuja triggereitä ja 
+        palautetaan asiaankuuluva funktio.'''
+        
+        self.msg = msg
+        
+
+        for trigger, func in self.triggers.items():
+            if re.findall(trigger, self.msg, self.re_flags):
+                
+                return func
+
+        return None
+    
+    def get_module_name(self):
+        '''Logging/debug: Selvitetään moduulin tiedostonimi.'''
+        
+        module = importlib.import_module(self.__module__)
+        return os.path.basename(module.__file__)
+    
+    
+    def start(self):
+        '''Moduuli tekee tehtävänsä.'''
+
+        pattern = "maanantai|tiistai|keskiviikko|torstai|perjantai|lauantai|sunnuntai"
+        if match := re.findall(pattern, self.msg, re.I):
+            self.weekday = match[0]
         else:
-            self.weekday = day
+            self.weekday = self.get_day()
+        
+        self.get_menus()
+        self.get_todays_menu()
 
     def get_emoji(self, food):
-        '''Lisätään murkinalajille sopiva emoji.'''
+        '''Lisätään murkinalajille sopiva emoji (yksi tai useampi).'''
         
         default_emoji = '😋'
         patterns = {
             'keitto': '🥣',
             'salaatti': '🥬',
-            'kasvi': '🥦',
+            'kasvi|parsakaal|kaali': '🥦',
             'lohi|kala|lohta': '🐟',
-            'liha': '🍖',
+            'liha|härkää': '🍖',
+            'broiler|kana': '🍗',
             'peruna|perunoi': '🥔'
         }
         prefix = ''
@@ -53,15 +112,23 @@ class Food:
         }
         weekday = datetime.now().strftime("%A")
             
-        for en, fi in conversions.items():
-            if weekday.lower() == en.lower():
-                self.weekday = fi
-                break     
+        ret = None
+        for weekday_en, weekday_fi in conversions.items():
+            if weekday.lower() == weekday_en.lower():
+                ret = weekday_fi
+                break
+
+        if not ret:
+            # Note-to-self: ota logging käyttöön
+
+            print(f"{self.__class__.__name__}: Viikonpäivää ei saatu selvitettyä.")
+
+        return ret     
     
-    def get_menu(self):
+    def get_menus(self):
         '''Haetaan ruokalistat.'''
 
-        r = requests.get(config.campus)
+        r = requests.get(campus)
         soup = bs(r.content, "html.parser")
         menu_data = soup.find("div", id="ruokalista")
     
@@ -87,6 +154,8 @@ class Food:
         self.menus = menus
 
     def get_todays_menu(self):
+
+        self.menu = []
         
         for day, menu in self.menus.items():
             parsed = day.split(" ")[0]
@@ -94,11 +163,25 @@ class Food:
             if parsed.lower() == self.weekday.lower():
                 for item in menu:
                     emoji = self.get_emoji(item)
-                    print(f"{emoji} {item}\n")
+                    self.menu.append(f"{emoji} {item}")
+                    
+
+    def print(self):
+        for item in self.menu:
+            print(item)
         
 
-
+# Testailu
 if __name__ == "__main__":
-    ruoka = Food()
-    ruoka.get_menu()
-    ruoka.get_todays_menu()
+    import sys
+    
+    msg = "ruoka"
+    if len(sys.argv) > 1:
+        msg = ' '.join(sys.argv[1:])
+
+    ruoka = Main()
+    
+    if func := ruoka.check_triggers(msg):
+        trigger_function = getattr(ruoka, func)
+        trigger_function()
+        ruoka.print()

@@ -17,21 +17,15 @@ Lisätietoja projektin edistymisestä: [TODO.md](https://github.com/Jabsu/SeduGP
 <br/>
 ## Toiminnot (kehitteillä)
 - Modulaarinen
-    - Opiskelijat voivat ohjelmointia harjoitellakseen kehitellä SeduGPT:lle *vallattomia* lisäosia!
-        - Ohjeet moduulien kehittämiseen tulossa myöhemmin
-        - Hauskat ja hyödylliset moduulit integroidaan projektiin
-- Ensisijaiset moduulit:
+    - Regex-triggeri -> funktio
+    - Ohjeet moduulien kehittämiseen tulossa myöhemmin
+    - Hauskat ja hyödylliset moduulit integroidaan projektiin
+- Alustavat moduulit
     - ruokalista.py: Kertoo valitsemasi kampuksen ruokalistan
-    - sää.py: Kertoo paikkakuntasi sään (ei bottia ilman säätä)
-    - tivi-antti.py: Antti-open rajapinnan kanssa keskusteleva kontrolleri
-- Iso ehkä: GPT-integraatio
-    - The dream: Keywordien sijaan botti ymmärtää kokonaisia lauseita ja pystyy ilmaisemaan moduulien generoimat tiedot kirjavin sanavalinnoin 
-        - Vaihtoehdot:
-            - OpenAI:n rajapinta 
-                - Maksullinen ☹️
-            - ChatGPT- tai Copilot-integraatio selaindataa hyödyntäen
-                - TOS-rikkomus ☹️
-            - GPT4All + valmennukset esim. Sedun sivustodatalla
+        - Triggerit: ruokaan liittyvät substantiivit ja verbit sekä viikonpäivät
+    - sää.py: Kertoo sään – ei bottia ilman säätoiminnallisuutta
+- Harkinnan alla: GPT-integraatio (GPT4All)
+
 
 
 ### Käyttöönotto  
