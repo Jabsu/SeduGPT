@@ -20,11 +20,10 @@ Lisätietoja projektin edistymisestä: [TODO.md](https://github.com/Jabsu/SeduGP
     - Regex-triggeri -> funktio (teksti, kuva, video, muu toiminto)
     - Ohjeet moduulien kehittämiseen tulossa myöhemmin
     - Hauskat ja hyödylliset moduulit integroitaneen projektiin
-- Esimerkkimodulit
+- Esimerkkimoduulit
     - ruokalista.py: Kertoo valitsemasi kampuksen ruokalistan
         - Triggerit: ruokaan liittyvät substantiivit/verbit ja viikonpäivät
     - sää.py: Kertoo sään – ei bottia ilman säätoiminnallisuutta
-    - tivi-antti.py: Ohjailee Antti-opettajaa Antin avointa API:a hyödyntäen 
 - Harkinnan alla: GPT-integraatio (GPT4All)
 
 
