@@ -5,8 +5,8 @@ Modulaarinen keskustelukumppani Sedun opiskelijoille.
 ```
 -===[ 𝗣𝗿𝗼𝗷𝗲𝗸𝘁𝗶𝗻 𝘀𝘁𝗮𝘁𝘂𝘀 ]===-
 
--> 📝 Esivalmistelu
-   ⚙️ Proof of Concept  
+   📝 Esivalmistelu
+-> ⚙️ Proof of Concept  
    🥉 Pronssi  
    🥈 Hopea  
    🥇 Kulta  
@@ -17,13 +17,14 @@ Lisätietoja projektin edistymisestä: [TODO.md](https://github.com/Jabsu/SeduGP
 <br/>
 ## Toiminnot (kehitteillä)
 - Modulaarinen
-    - Regex-triggeri -> funktio
+    - Regex-triggeri -> funktio (teksti, kuva, video, muu toiminto)
     - Ohjeet moduulien kehittämiseen tulossa myöhemmin
-    - Hauskat ja hyödylliset moduulit integroidaan projektiin
-- Alustavat moduulit
+    - Hauskat ja hyödylliset moduulit integroitaneen projektiin
+- Esimerkkimodulit
     - ruokalista.py: Kertoo valitsemasi kampuksen ruokalistan
-        - Triggerit: ruokaan liittyvät substantiivit ja verbit sekä viikonpäivät
+        - Triggerit: ruokaan liittyvät substantiivit/verbit ja viikonpäivät
     - sää.py: Kertoo sään – ei bottia ilman säätoiminnallisuutta
+    - tivi-antti.py: Ohjailee Antti-opettajaa Antin avointa API:a hyödyntäen 
 - Harkinnan alla: GPT-integraatio (GPT4All)
 
 

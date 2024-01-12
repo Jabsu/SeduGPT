@@ -12,6 +12,9 @@
     - [x] Moduulien vakiofunktiot
     - [x] main.py: Moduulien importtaus & initialisaatio (< config.py)
     - [x] main.py: check_triggers-iterointi moduuli kerrallaan
+        - [x] Botti ulostaa tekstin moduulin määrittämällä tavalla
+        - [x] Komentorivi- ja GUI-ulostus
+- [x] Komentorivitoiminnallisuusvalmistelua
 
 ### v0.3 — Pronssi
 - [ ] Modulaarisuusviimeistelyä

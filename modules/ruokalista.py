@@ -21,24 +21,29 @@ class Main:
         
         # Regex-triggeri -> funktio
         self.triggers = {
-            "r(uu|uo)aksi|ruoka|murkina|syödään|syömme|safka|pöperö": "start",
+            "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|safka|pöperö": "start",
         }
 
         # Regex-flagit (re.I = ignore case, re.NOFLAG = ei flageja)
         self.re_flags = re.I
 
-        # Palautettavan sisällön tyyppi 
-        self.return_type = "text"
-
         # Moduulin tiedostonimi
         self.name = self.get_module_name()
 
+
+
   
-    def return_value(self):
-        '''Lopputuloksen palauttaminen.'''
+    def set_return_data(self, value):
+        '''Asetetaan palautettava output.'''
         
-        return self.menu
-    
+        self.return_value = value
+
+        # Muutetaanko mahdollinen lista stringiksi
+        self.return_sanitize = True
+
+        # Merkki, jolla listan arvot erotellaan ('\n' = rivinvaihto) 
+        self.return_separator = '\n'
+        
         
     def check_triggers(self, msg):
         '''Tutkitaan, sisältääkö käyttäjän viesti __initissä__ asetettuja triggereitä ja 
@@ -64,7 +69,13 @@ class Main:
     def start(self):
         '''Moduuli tekee tehtävänsä.'''
 
+        # Jäteen huomioimatta tietyt erikoisuudet ruokalistassa
+        self.ignore_entries = 'opiskeli|opetus'
+
+
         pattern = "maanantai|tiistai|keskiviikko|torstai|perjantai|lauantai|sunnuntai"
+        
+        # Tarkistetaan, sisältääkö käyttäjän viesti viikonpäivämaininnan
         if match := re.findall(pattern, self.msg, re.I):
             self.weekday = match[0]
         else:
@@ -153,7 +164,9 @@ class Main:
 
         self.menus = menus
 
+    
     def get_todays_menu(self):
+        '''Haetaan valitun tai (oletuksena) kuluvan päivän ruokalista.'''
 
         self.menu = []
         
@@ -162,11 +175,18 @@ class Main:
             
             if parsed.lower() == self.weekday.lower():
                 for item in menu:
+                    if re.findall(self.ignore_entries, item, re.I):
+                        continue
                     emoji = self.get_emoji(item)
                     self.menu.append(f"{emoji} {item}")
-                    
+
+        # Määritellään palautettava data
+        self.set_return_data(self.menu)
+        
 
     def print(self):
+        '''Terminaalinen ulostus. Placeholder.'''
+
         for item in self.menu:
             print(item)
         
