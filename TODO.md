@@ -17,16 +17,18 @@
 - [x] Komentorivitoiminnallisuusvalmistelua
 
 ### v0.3 — Pronssi
-- [ ] Modulaarisuusviimeistelyä
-- [ ] Käyttöliittymä uusiksi  
-    📝 WhatsApp-tyylinen layout?  
-- [ ] Debug-moodi (logging, output oksennetaan chattiin)
+- [x] UI:n kaunistelua
+    - [x] Lopputuotetta kutakuinkin vastaava layout
+    - [x] Viesteihin irssi-tyyliset prefixit ja tageja hyödyntävä väritys
+    - [x] Tkinter -> customtkinter
+- [ ] Textbox-emojeihin värit!
 - [ ] Moduulikohtainen konfigurointi (frontend & backend)
     - [ ] config.py -> settings.json
     - [ ] import, export, defaults, exceptions
     - [ ] Asetusikkuna (modulaarisuus huomioiden)  
         📝 Määritellään moduulissa: Label, variablen nimi, oletusarvo, widget-tyyppi  
         📝 Tuki useille asetuksille
+- [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Toinen moduuli: Sää
 - [ ] Mahdollisesti: Tkinter -> PySide
 

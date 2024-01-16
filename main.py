@@ -1,8 +1,9 @@
 import sys
 import random
 import importlib
+import time
+import os
 
-from tkinter import *
 
 from GUI.main_window import UI
 import config
@@ -17,12 +18,15 @@ class Main:
         
         self.args = args
 
+        self.user_name = os.getlogin()
+        self.bot_name = '𝐒𝐞𝐝𝐮𝐆𝐏𝐓'
+
         self.initialize_modules()
         
         if args == '--gui':
             # GUI
             self.UI = UI()
-            self.UI.send_button.config(command=lambda: self.send())
+            self.UI.send_button.configure(command=lambda: self.send())
             self.UI.bind('<Return>', lambda event=None: self.send())
         
             self.UI.mainloop()
@@ -91,11 +95,10 @@ class Main:
         if not self.msg:
             return
         
-        self.UI.entry.delete(0, END)
+        self.UI.entry.delete(0, 'end')
         
-        # Placeholder-formatointi (funktio näille myöhemmin)
-        formatted_msg = f"{self.UI.USER_PREFIX}{self.UI.USERNAME}{self.UI.USER_SUFFIX}{self.UI.SEPARATOR}{self.msg}\n" 
-        self.UI.txt.insert('end', '\n' + formatted_msg)
+        self.send_prefix('user') 
+        self.UI.text_insert(self.msg+'\n', tag='msg')
         
         # Tarkistetaan, triggeröikö viesti jonkin moduulin
         self.iterate_module_triggers()
@@ -115,6 +118,27 @@ class Main:
 
         return ret
     
+
+    def send_prefix(self, user):
+        '''Lähetetään etuliite (HH:MM <käyttäjä>).'''
+        
+        clock = time.strftime("%H:%M ")
+        self.UI.text_insert(clock, 'prefix')      
+        self.UI.text_insert('<', 'prefix2')
+     
+        if user == 'bot':
+            user_name = self.bot_name
+            self.UI.text_insert('@', 'prefix2')
+        else:
+            user_name = self.user_name
+            self.UI.text_insert('+', 'prefix2')
+
+        self.UI.text_insert(user_name, user)      
+        self.UI.text_insert('> ' , 'prefix2')
+
+        
+
+
     def random_output(self):
         outputs = [
             'Opettelen vielä, ymmärrän kohta.',
@@ -137,14 +161,22 @@ class Main:
             if type(bot_msg) != 'str' and self.current_mod.return_sanitize:
                 bot_msg = self.sanitize(bot_msg)
 
-        
+     
+        self.send_prefix('bot') 
+
         if self.args != "--gui":
             # Mikäli GUI ei käytössä, käytetään moduulin print-funktiota (placeholder)
             self.current_mod.print()
         else:
-            # Placeholder-formatointi (funktio näille myöhemmin)
-            formatted_msg =  f"{self.UI.USER_PREFIX}{self.UI.BOT_NAME}{self.UI.USER_SUFFIX}{self.UI.SEPARATOR}{bot_msg}\n"
-            self.UI.txt.insert('end', '\n' + formatted_msg)
+            if triggered_by_module:
+                
+                # Jos moduulissa on määritelty otsikko, ulostetaan tämä ensin
+                if title := self.current_mod.message_title:
+                    self.UI.text_insert(title, tag='title')
+                   
+            
+            self.UI.text_insert(bot_msg+'\n', tag='msg')
+            
 
 
 

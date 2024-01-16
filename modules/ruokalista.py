@@ -33,7 +33,7 @@ class Main:
 
 
   
-    def set_return_data(self, value):
+    def set_return_data(self, value, title=False):
         '''Asetetaan palautettava output.'''
         
         self.return_value = value
@@ -43,6 +43,9 @@ class Main:
 
         # Merkki, jolla listan arvot erotellaan ('\n' = rivinvaihto) 
         self.return_separator = '\n'
+
+        # Optionaalinen otsikko (False = ei otsikkoa)
+        self.message_title = title
         
         
     def check_triggers(self, msg):
@@ -181,7 +184,7 @@ class Main:
                     self.menu.append(f"{emoji} {item}")
 
         # Määritellään palautettava data
-        self.set_return_data(self.menu)
+        self.set_return_data(self.menu, title=f'\n{self.weekday.title()}n ruokalista:\n\n')
         
 
     def print(self):
