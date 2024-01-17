@@ -18,9 +18,10 @@
 
 ### v0.3 — Pronssi
 - [x] UI:n kaunistelua
-    - [x] Lopputuotetta kutakuinkin vastaava layout
+    - [x] Lopullista versiota kutakuinkin vastaava layout
     - [x] Viesteihin irssi-tyyliset prefixit ja tageja hyödyntävä väritys
     - [x] Tkinter -> customtkinter
+- [ ] Textbox-tagien hyödyntäminen moduulimäärityksin
 - [ ] Textbox-emojeihin värit!
 - [ ] Moduulikohtainen konfigurointi (frontend & backend)
     - [ ] config.py -> settings.json
