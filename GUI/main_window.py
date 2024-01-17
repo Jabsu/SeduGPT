@@ -3,23 +3,21 @@
 from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, CTkButton as Button, 
                            CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk)
 
+import customtkinter
+
 from PIL import Image, ImageDraw, ImageFont
 
 
 class UI(Tk):
     def __init__(self, master=None):
+        customtkinter.deactivate_automatic_dpi_awareness()
         self.master = Tk.__init__(self, master)
         
         self.title(f"SeduGPT")
 
-        # customtkinter.set_widget_scaling(1.0)
-        
         width = self.winfo_screenwidth() / 2
         height = self.winfo_screenheight() / 2
         
-        # self.geometry(f"{width/2}x{height/2}")
-        self.resizable(False, False)
-
         self.CANVAS_COLOR = "#2C2C2C"
         self.CANVAS_WIDTH = width
         self.CANVAS_HEIGHT = height
@@ -38,12 +36,11 @@ class UI(Tk):
         self.FONT_BOLD = ('Consolas', 14, 'bold')
 
         self.SEPARATOR = "\n"
-        
+
         self.create_widgets()
 
     
     def text_insert(self, msg, tag=None):
-        # self.decorate_text(msg)
         self.txt.configure(state='normal')
         
 
@@ -53,7 +50,6 @@ class UI(Tk):
         
         self.txt.configure(state='disabled')
     
-
 
     def emoji_img(self, size, text):
         font = ImageFont.truetype("seguiemj.ttf", size=int(round(size*72/96, 0))) 
@@ -88,31 +84,31 @@ class UI(Tk):
 
 
         self.canvas = Canvas(
-            self,
+            self.master,
             bg=self.CANVAS_COLOR,
-            height=self.CANVAS_HEIGHT,
-            width=self.CANVAS_WIDTH,
+            height=int(self.CANVAS_HEIGHT),
+            width=int(self.CANVAS_WIDTH),
             bd=0,
             highlightthickness=0,
         )
+       
+        self.canvas.grid(row=1, column=0, padx=20, pady=20)
 
-        self.canvas.grid(row=1, padx=20, pady=20)
-
-        
         self.txt = Textbox(
             self.canvas, 
             wrap='word', 
             fg_color=self.TEXTBOX_FG, 
             text_color=self.TEXTBOX_TEXT_COLOR,
             font=self.FONT,
-            width=self.CANVAS_WIDTH/2,
-            height=self.CANVAS_HEIGHT/2,
+            width=self.canvas.winfo_reqwidth(),
+            height=self.canvas.winfo_reqheight(),
             state='disabled',
             border_width=0
         )
 
-        self.txt.pack(fill='both', expand=True)
+        self.txt.pack(fill='both', expand=False)
 
+       
         self.txt.tag_config("prefix", foreground="#6f6f6f")
         self.txt.tag_config("prefix2", foreground="#909090")
         self.txt.tag_config("title", foreground="#ffffff")
@@ -126,19 +122,18 @@ class UI(Tk):
         # self.scrollbar.place(relheight=1, relx=0.974)
         
         self.entry = Entry(
-            self, 
+            self.master, 
             placeholder_text="Kirjoita viesti...", 
             fg_color=self.ENTRY_FG, 
             text_color=self.ENTRY_TEXT_COLOR, 
             font=self.FONT,
-            width=self.CANVAS_WIDTH/2,
+            width=self.canvas.winfo_reqwidth(),
         )
 
         
         
         self.entry.grid(row=2, column=0)
 
-        text = "⚙️"
         emoji = self.emoji_img(50, "⚙️")
         self.settings_button = Button(
             self,
@@ -149,12 +144,6 @@ class UI(Tk):
         )
         self.settings_button.grid(row=0, column=1, sticky='e')
         
-        self.send_button = Button(self, text="➤", font=self.FONT_BOLD, width=20)
+        self.send_button = Button(self.master, text="➤", font=self.FONT_BOLD, width=20)
         self.send_button.grid(row=2, column=1, sticky='w')
-     
 
-    
-        
-
-        
-   
