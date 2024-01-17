@@ -31,6 +31,42 @@ class Main:
         self.name = self.get_module_name()
 
 
+        self.settings_UI_configs()
+
+    def settings_UI_configs(self):
+        '''Määritetään asetusikkunaan lisättävät widgetit ja asetukset.'''
+
+        self.settings = {
+            "campus": {
+                "label": "Kampus",
+                "interact_widget": "OptionMenu",
+                "options": {
+                   "Sedu Ilmajoki":
+                        "https://sedu.fi/kampus/sedu-ilmajoki-ilmajoentie/",
+                    "Sedu Kurikka": 
+                        "https://sedu.fi/kampus/sedu-kurikka/",
+                    "Sedu Lappajärvi":
+                        "https://sedu.fi/kampus/lappajarvi/",
+                    "Sedu Lapua":
+                        "https://sedu.fi/kampus/sedu-lapua/",
+                    "Sedu Seinäjoki, Rastaantaival":
+                        "https://sedu.fi/kampus/sedu-seinajoki-rastaantaival/",
+                    "Sedu Seinäjoki, Suupohjantie": 
+                        "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/",    
+                    "Sedu Seinäjoki, Törnäväntie":
+                        "https://sedu.fi/kampus/sedu-seinajoki-tornavantie/",
+                    "Sedu Vaasa":
+                        "https://sedu.fi/kampus/sedu-vaasa-runsorintie/",
+                    "Sedu Ähtäri, Koulutie":
+                        "https://sedu.fi/kampus/sedu-ahtari-koulutie/",
+                    "Sedu Ähtäri, Tuomarniementie":
+                        "https://sedu.fi/kampus/sedu-ahtari-tuomarniementie/",
+                },
+                "default_option": "Sedu Seinäjoki, Suupohjantie", 
+            }
+        }
+
+   
 
   
     def set_return_data(self, value, title=False):

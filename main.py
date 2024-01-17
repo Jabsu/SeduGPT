@@ -6,6 +6,7 @@ import os
 
 
 from GUI.main_window import UI
+from GUI.settings_window import SettingsUI
 import config
 
 # Ladataan moduulit
@@ -19,7 +20,10 @@ class Main:
         self.args = args
 
         self.user_name = os.getlogin()
-        self.bot_name = '𝐒𝐞𝐝𝐮𝐆𝐏𝐓'
+        self.bot_name = 'SeduGPT'
+
+        self.settings = {}
+        self.module_settings = {}
 
         self.initialize_modules()
         
@@ -27,6 +31,7 @@ class Main:
             # GUI
             self.UI = UI()
             self.UI.send_button.configure(command=lambda: self.send())
+            self.UI.settings_button.configure(command=lambda: self.open_settings_window())
             self.UI.bind('<Return>', lambda event=None: self.send())
         
             self.UI.mainloop()
@@ -42,15 +47,15 @@ class Main:
 
             
 
-    '''
-    def create_list_of_modules(self):
+    def open_settings_window(self):
         
-        self.module_list = []
+        self.cfgUI = SettingsUI()
+        
+        self.cfgUI.add_main_config_widgets(self.settings)
+        self.cfgUI.add_module_config_widgets(self.module_settings)
+        
+        self.cfgUI.mainloop()
 
-        for lib in sys.modules.keys():
-            if lib.startswith('modules.'):
-                self.module_list.append(lib)
-    '''
 
     def initialize_modules(self):
         
@@ -59,12 +64,21 @@ class Main:
 
         for mod in config.MODULES:
             module = importlib.import_module(mod)
-            # module_main_class = getattr(module, 'Main')
-            # self.modules[module] = module_main_class
+            module_main_class = getattr(module, 'Main')()
+            module_name = module_main_class.name
+            module_UI_settings = module_main_class.settings
+
+            self.module_settings[module_name] = module_UI_settings
+
+         
+            
+          
             self.modules.append(module)
 
     
     def iterate_module_triggers(self):
+        '''Käydään läpi moduulien triggerit. (TODO: tehdään tämä vain kerran.)'''
+        
         for module in self.modules:
             self.current_mod = module.Main()
 

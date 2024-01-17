@@ -21,14 +21,13 @@
     - [x] Lopullista versiota kutakuinkin vastaava layout
     - [x] Viesteihin irssi-tyyliset prefixit ja tageja hyödyntävä väritys
     - [x] Tkinter -> customtkinter
+- [ ] Moduulien triggerit käydään läpi vain kerran (initialisoinnin yhteydessä)
 - [ ] Textbox-tagien hyödyntäminen moduulimäärityksin
 - [ ] Textbox-emojeihin värit!
 - [ ] Moduulikohtainen konfigurointi (frontend & backend)
     - [ ] config.py -> settings.json
     - [ ] import, export, defaults, exceptions
-    - [ ] Asetusikkuna (modulaarisuus huomioiden)  
-        📝 Määritellään moduulissa: Label, variablen nimi, oletusarvo, widget-tyyppi  
-        📝 Tuki useille asetuksille
+    - [x] Asetusikkuna (modulaarisuus huomioiden)  
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Toinen moduuli: Sää
 - [ ] Mahdollisesti: Tkinter -> PySide
