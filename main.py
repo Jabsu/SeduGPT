@@ -3,6 +3,7 @@ import random
 import importlib
 import time
 import os
+import json
 
 
 from GUI.main_window import UI
@@ -22,8 +23,8 @@ class Main:
         self.user_name = os.getlogin()
         self.bot_name = 'SeduGPT'
 
-        self.settings = {}
-        self.module_settings = {}
+        self.settings_file = 'settings.json'
+        self.settings = self.read_file()
 
         self.initialize_modules()
         
@@ -44,19 +45,47 @@ class Main:
             # Testiviesti (parametri)
             self.msg = args
             self.iterate_module_triggers()
-
-            
+           
 
     def open_settings_window(self):
         
-        self.cfgUI = SettingsUI()
+        self.cfgUI = SettingsUI(self.UI, self.settings)
         
-        self.cfgUI.add_main_config_widgets(self.settings)
-        self.cfgUI.add_module_config_widgets(self.module_settings)
+        self.cfgUI.add_main_config_widgets()
+        self.cfgUI.add_module_config_widgets()
+
+        self.cfgUI.protocol("WM_DELETE_WINDOW", lambda: self.settings_window_closed())
         
         self.cfgUI.mainloop()
 
 
+
+    def settings_window_closed(self):
+        self.settings = self.cfgUI.settings
+        self.save_file(self.settings)
+        self.cfgUI.destroy()
+
+    
+    def read_file(self):
+        
+        data = {}
+        if os.path.exists(self.settings_file):
+            try:
+                with open(self.settings_file, 'r') as f:
+                    data = json.load(f)
+            except:
+                data = {}
+        
+            if type(data) != dict:
+                data = {}
+
+        return data
+            
+    def save_file(self, settings):
+        with open(self.settings_file, 'w') as f:
+            json.dump(settings, f, indent=4)
+
+    
     def initialize_modules(self):
         
         # self.modules = {}
@@ -65,10 +94,11 @@ class Main:
         for mod in config.MODULES:
             module = importlib.import_module(mod)
             module_main_class = getattr(module, 'Main')()
-            module_name = module_main_class.name
-            module_UI_settings = module_main_class.settings
-
-            self.module_settings[module_name] = module_UI_settings
+            module_name = module_main_class.get_module_name()
+    
+            if not self.settings.get(module_name):
+                module_UI_settings = module_main_class.get_settings()
+                self.settings[module_name] = module_UI_settings
 
          
             
@@ -80,12 +110,17 @@ class Main:
         '''Käydään läpi moduulien triggerit. (TODO: tehdään tämä vain kerran.)'''
         
         for module in self.modules:
-            self.current_mod = module.Main()
+            
+            config = None
 
+            
+            self.current_mod = module.Main()
+            mod_name = self.current_mod.get_module_name()
+            
             triggered = False
             
             # Moduuli palauttaa spesifin funktion, mikäli viestistä löytyy triggerivastaavuus 
-            if module_func := self.current_mod.check_triggers(self.msg):
+            if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
                 
                 triggered = True
                 
@@ -163,6 +198,7 @@ class Main:
         
         return random.choice(outputs)
             
+    
     def bot_output(self, triggered_by_module=False):
         '''Botti oksentaa tekstiwidgettiin.'''
         
@@ -191,9 +227,6 @@ class Main:
             
             self.UI.text_insert(bot_msg+'\n', tag='msg')
             
-
-
-
 
 if __name__ == '__main__':
     

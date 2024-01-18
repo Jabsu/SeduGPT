@@ -24,9 +24,9 @@
 - [ ] Moduulien triggerit käydään läpi vain kerran (initialisoinnin yhteydessä)
 - [ ] Textbox-tagien hyödyntäminen moduulimäärityksin
 - [ ] Textbox-emojeihin värit!
-- [ ] Moduulikohtainen konfigurointi (frontend & backend)
-    - [ ] config.py -> settings.json
-    - [ ] import, export, defaults, exceptions
+- [x] Moduulikohtainen konfigurointi (frontend & backend)
+    - [x] config.py -> settings.json
+    - [x] Asetusten tallentaminen ja lataaminen
     - [x] Asetusikkuna (modulaarisuus huomioiden)  
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Toinen moduuli: Sää

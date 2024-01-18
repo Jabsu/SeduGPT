@@ -6,18 +6,11 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 
-# placeholder (testailuun)
-try:
-    import config
-    campus = config.CAMPUS
-except ModuleNotFoundError:
-    campus = "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/"
+
 
 class Main:
 
-    def __init__(self, msg=None):
-
-        self.msg = msg
+    def __init__(self):
         
         # Regex-triggeri -> funktio
         self.triggers = {
@@ -27,16 +20,11 @@ class Main:
         # Regex-flagit (re.I = ignore case, re.NOFLAG = ei flageja)
         self.re_flags = re.I
 
-        # Moduulin tiedostonimi
-        self.name = self.get_module_name()
 
-
-        self.settings_UI_configs()
-
-    def settings_UI_configs(self):
+    def get_settings(self):
         '''Määritetään asetusikkunaan lisättävät widgetit ja asetukset.'''
 
-        self.settings = {
+        settings = {
             "campus": {
                 "label": "Kampus",
                 "interact_widget": "OptionMenu",
@@ -62,10 +50,11 @@ class Main:
                     "Sedu Ähtäri, Tuomarniementie":
                         "https://sedu.fi/kampus/sedu-ahtari-tuomarniementie/",
                 },
-                "default_option": "Sedu Seinäjoki, Suupohjantie", 
+                "default_option": "Sedu Seinäjoki, Suupohjantie",
+                "selected_option": "",
             }
         }
-
+        return settings
    
 
   
@@ -77,19 +66,22 @@ class Main:
         # Muutetaanko mahdollinen lista stringiksi
         self.return_sanitize = True
 
-        # Merkki, jolla listan arvot erotellaan ('\n' = rivinvaihto) 
+        # Jos edeltävään kyllä: merkki, jolla listan arvot erotellaan ('\n' = rivinvaihto) 
         self.return_separator = '\n'
 
         # Optionaalinen otsikko (False = ei otsikkoa)
         self.message_title = title
         
         
-    def check_triggers(self, msg):
+    def check_triggers(self, msg, changed_settings=None):
         '''Tutkitaan, sisältääkö käyttäjän viesti __initissä__ asetettuja triggereitä ja 
         palautetaan asiaankuuluva funktio.'''
         
         self.msg = msg
-        
+        if changed_settings:
+            self.settings = changed_settings
+        else:
+            self.settings = self.get_settings()
 
         for trigger, func in self.triggers.items():
             if re.findall(trigger, self.msg, self.re_flags):
@@ -120,11 +112,21 @@ class Main:
         else:
             self.weekday = self.get_day()
         
-        self.get_menus()
-        self.get_todays_menu()
+        if hasattr(self, 'menus') and hasattr(self, 'campus'):
+            if self.menus.get(self.campus):
+                # Valitun kampuksen menu muistissa, haetaan spesifin päivän menu
+                self.get_specific_menu()
+        else:
+            # Valitun kampuksen menu ei muistissa, KAAVITAAN* kampuksen verkkosivua
+            #  * scraping; tietoteknisen sanaston suomentaminen on toisinaan hauska haaste
+            if self.get_menus():
+                self.get_specific_menu()
+        
+            
 
+    
     def get_emoji(self, food):
-        '''Lisätään murkinalajille sopiva emoji (yksi tai useampi).'''
+        '''Lisätään murkinalajille sopiva emoji.'''
         
         default_emoji = '😋'
         patterns = {
@@ -133,14 +135,15 @@ class Main:
             'kasvi|parsakaal|kaali': '🥦',
             'lohi|kala|lohta': '🐟',
             'liha|härkää': '🍖',
-            'broiler|kana': '🍗',
+            'broiler|^kana': '🍗',
             'peruna|perunoi': '🥔'
         }
         prefix = ''
         for pattern, emoji in patterns.items():
 
             if re.findall(pattern, food, re.I):
-                prefix += emoji
+                if not prefix:
+                    prefix = emoji
 
         if not prefix:
             prefix = default_emoji
@@ -171,21 +174,36 @@ class Main:
         if not ret:
             # Note-to-self: ota logging käyttöön
 
-            print(f"{self.__class__.__name__}: Viikonpäivää ei saatu selvitettyä.")
+            print(f"{self.get_module_name()}: Viikonpäivää ei saatu selvitettyä.")
 
         return ret     
     
     def get_menus(self):
         '''Haetaan ruokalistat.'''
 
+        if selected := self.settings['campus']['selected_option']:
+            campus = self.settings['campus']['options'][selected]
+        else:
+            default = self.settings['campus']['default_option'] 
+            campus = self.settings['campus']['options'][default]
+
+        self.campus = campus    
+        
         r = requests.get(campus)
         soup = bs(r.content, "html.parser")
         menu_data = soup.find("div", id="ruokalista")
+
+        if not menu_data:
+             self.set_return_data(
+                 f'Valitun kampuksen ruokalista ei ole saatavilla. Kuinkas nyt suu pannaan?')
+             return
+
     
         menus = {}
 
         day = None
    
+            
 
         for entry in menu_data.find_all('p'):
         
@@ -201,26 +219,36 @@ class Main:
                 menu = []
                 menus[day] = menu
 
-        self.menus = menus
+        self.menus = {self.campus: menus}
+        return True
 
-    
-    def get_todays_menu(self):
-        '''Haetaan valitun tai (oletuksena) kuluvan päivän ruokalista.'''
+
+    def get_specific_menu(self):
+        '''Haetaan valitun tai kuluvan päivän ruokalista.'''
 
         self.menu = []
         
-        for day, menu in self.menus.items():
+        for day, menu in self.menus[self.campus].items():
             parsed = day.split(" ")[0]
             
             if parsed.lower() == self.weekday.lower():
                 for item in menu:
                     if re.findall(self.ignore_entries, item, re.I):
                         continue
-                    emoji = self.get_emoji(item)
-                    self.menu.append(f"{emoji} {item}")
+                    
+                    # Erikoistapaus: kasvisruokavaihtoehto samalla rivillä (separaattorina /)
+                    for i in item.split('/'):
+                        emoji = self.get_emoji(i)
+                        self.menu.append(f"{emoji} {i.lstrip().rstrip()}")
+                    
+                    
 
         # Määritellään palautettava data
-        self.set_return_data(self.menu, title=f'\n{self.weekday.title()}n ruokalista:\n\n')
+        if self.menu:
+            self.set_return_data(self.menu, title=f'\n{self.weekday.title()}n ruokalista:\n\n')
+        else:
+            # Päivän menu hukassa
+            self.set_return_data("Luvassa saattaa olla laihaa keittoa.")
         
 
     def print(self):

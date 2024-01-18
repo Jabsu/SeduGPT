@@ -15,15 +15,14 @@ Modulaarinen keskustelukumppani Sedun opiskelijoille.
 Lisätietoja projektin edistymisestä: [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md)
 <br/>
 <br/>
-## Toiminnot (kehitteillä)
+## Toiminnot
 - Modulaarinen
-    - Regex-triggeri -> funktio (teksti, kuva, video, muu toiminto)
+    - Regex-triggeri -> funktio
     - Ohjeet moduulien kehittämiseen tulossa myöhemmin
     - Hauskat ja hyödylliset moduulit integroitaneen projektiin
 - Esimerkkimoduulit
     - ruokalista.py: Kertoo valitsemasi kampuksen ruokalistan
         - Triggerit: ruokaan liittyvät substantiivit/verbit ja viikonpäivät
-    - sää.py: Kertoo sään – ei bottia ilman säätoiminnallisuutta
 - Harkinnan alla: GPT-integraatio (GPT4All)
 
 
@@ -31,4 +30,4 @@ Lisätietoja projektin edistymisestä: [TODO.md](https://github.com/Jabsu/SeduGP
 ### Käyttöönotto  
 1. Asenna Python 3.8+ (suositeltavaa: 3.12+)
 2. Asenna vaaditut kirjastot: `pip install -U -r requirements.txt`
-3. Sorki config.py-tiedostoa (placeholder)
+3. Aktivoi haluamasi moduulit config.py:ssä

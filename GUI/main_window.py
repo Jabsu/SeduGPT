@@ -1,7 +1,8 @@
 # from tkinter import Menu
 
 from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, CTkButton as Button, 
-                           CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk)
+                           CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk,
+                           CTkLabel as Label)
 
 import customtkinter
 
@@ -35,7 +36,11 @@ class UI(Tk):
         self.FONT = ('Consolas', 14)
         self.FONT_BOLD = ('Consolas', 14, 'bold')
 
+        self.LABEL_FONT = ('Helvetica', 20)
+
         self.SEPARATOR = "\n"
+
+        
 
         self.create_widgets()
 
@@ -66,23 +71,7 @@ class UI(Tk):
 
     def create_widgets(self):
 
-        
-        '''
-        # Tehdään old school -menu
-        menubar = Menu(self, tearoff=0)
-        menu = Menu(menubar, tearoff=0)
-
-        menu.add_command(label='Asetukset', command=lambda: self.open_settings_window(),
-                         font=self.FONT)
-        menu.add_separator()
-        menu.add_command(label="Poistu", command=self.destroy, font=self.FONT)
-        menubar.add_cascade(label="Menu", menu=menu)
-        
-        self.config(menu=menubar)
-        '''
-     
-
-
+        # Label(self.master, text="SeduGPT", font=self.LABEL_FONT).grid(row=0, column=0, padx=20, sticky='w')
         self.canvas = Canvas(
             self.master,
             bg=self.CANVAS_COLOR,
@@ -92,7 +81,7 @@ class UI(Tk):
             highlightthickness=0,
         )
        
-        self.canvas.grid(row=1, column=0, padx=20, pady=20)
+        self.canvas.grid(row=1, column=0, padx=20, pady=(0,10))
 
         self.txt = Textbox(
             self.canvas, 
@@ -132,7 +121,7 @@ class UI(Tk):
 
         
         
-        self.entry.grid(row=2, column=0)
+        self.entry.grid(row=2, column=0, pady=(10,20))
 
         emoji = self.emoji_img(50, "⚙️")
         self.settings_button = Button(
@@ -142,8 +131,10 @@ class UI(Tk):
             font=self.FONT_BOLD,
             width=20,
         )
-        self.settings_button.grid(row=0, column=1, sticky='e')
+        self.settings_button.grid(row=0, column=1, sticky='e', pady=(20,0), padx=(0,20))
         
         self.send_button = Button(self.master, text="➤", font=self.FONT_BOLD, width=20)
-        self.send_button.grid(row=2, column=1, sticky='w')
+        self.send_button.grid(row=2, column=1, sticky='w', pady=(10,20))
+
+        
 

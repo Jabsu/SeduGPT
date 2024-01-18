@@ -1,21 +1,30 @@
 from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, CTkButton as Button, 
                            CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk,
-                           CTkLabel as Label, CTkOptionMenu as OptionMenu)
+                           CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel)
 from tkinter import ttk
 
 import customtkinter
 
-class SettingsUI(Tk):
-    def __init__(self, master=None):
+class SettingsUI(Toplevel):
+    def __init__(self, main_window, settings):
         customtkinter.deactivate_automatic_dpi_awareness()
-        self.master = Tk.__init__(self, master)
+        super().__init__(main_window)
+        
+        self.main_window = main_window
 
         self.title(f"Asetukset")
+        self.settings = settings
+        
+        width = self.main_window.winfo_reqwidth() / 2
+        height = self.main_window.winfo_reqheight() / 2
 
-        self.configurations = {}
+        self.minsize(width, height)
 
-        width = self.winfo_screenwidth() / 2
-        height = self.winfo_screenheight() / 2
+        
+        self.grab_set()
+        self.resizable(False, False)
+        
+        self.configure(background='#2C2C2C')
         
         self.CANVAS_COLOR = "#2C2C2C"
         self.CANVAS_WIDTH = width
@@ -26,23 +35,42 @@ class SettingsUI(Tk):
         
         self.current_row = 0
 
-        
         self.create_widgets()
-      
+        
 
+    def center_window(self):
+        '''Keskitetään asetusikkuna suhteessa pääikkunaan.'''
+
+        main_width = self.main_window.winfo_reqwidth()
+        main_height = self.main_window.winfo_reqheight()
+
+        main_x = self.main_window.winfo_x()
+        main_y = self.main_window.winfo_y()
+
+        self.update_idletasks()
+        window_width = self.winfo_width()
+        window_height = self.winfo_height()
+        
+        x = main_x + (main_width // 2) - (window_width // 2)
+        y = main_y + (main_height // 2) - (window_height // 2)
+
+        self.geometry(f'{window_width}x{window_height}+{x}+{y}')   
+
+    
     def create_widgets(self):
         self.canvas = Canvas(
             self,
             width=self.CANVAS_WIDTH,
             height=self.CANVAS_HEIGHT,
             bd=0,
-            bg=self.CANVAS_COLOR,
+            # bg=self.CANVAS_COLOR,
+            bg=self['bg'],
             highlightthickness=0,
         )
-        self.canvas.grid(row=1, column=0, padx=20, pady=20)
+        self.canvas.pack(fill='both', padx=20, pady=20)
         self.scrollbar = Scrollbar(self.canvas)
     
-    def add_main_config_widgets(self, settings):
+    def add_main_config_widgets(self):
         pass
 
     
@@ -50,33 +78,33 @@ class SettingsUI(Tk):
         pass
 
     
-    def change_value(self, selection, module, config_name, options=dict):
-        value = options[selection]
-        self.settings[module][config_name]['selected'] = value
+    def set_selected_option(self, selection, module, config_name, options=dict):
+        # value = options[selection]
+        self.settings[module][config_name]['selected_option'] = selection
         
   
-    def add_module_config_widgets(self, settings):
+    def add_module_config_widgets(self):
         
-        self.settings = settings
+        
 
-        for module, configurations in settings.items():
-            label = Label(
+        for module, configurations in self.settings.items():
+            module_label = Label(
                 self.canvas, 
                 text=f"Moduuli: {module}",
                 text_color='white',
                 font=self.FONT_BOLD,
             )
-            label.grid(row=self.current_row, column=0)
+            module_label.grid(row=self.current_row, column=0, sticky='w')
             separator = ttk.Separator(self.canvas, orient='horizontal')
-            separator.grid(row=self.current_row+1, column=0, columnspan=2, sticky='ew')
+            separator.grid(row=self.current_row+1, column=0, columnspan=2, sticky='ew', pady=(2,10))
             self.current_row += 2
             for cfg_name, cfg in configurations.items():
-                label = Label(
+                cfg_label = Label(
                     self.canvas, 
                     text=cfg['label'],
                     font=self.FONT,
                     )
-                label.grid(row=self.current_row, column=0)
+                cfg_label.grid(row=self.current_row, column=0, sticky='e', padx=(0,10))
                
                 if cfg['interact_widget'] == 'OptionMenu': 
                  
@@ -90,21 +118,28 @@ class SettingsUI(Tk):
                     menu = OptionMenu(
                         self.canvas, 
                         values=list_of_options,
-                        command=lambda selection: self.change_value(
+                        command=lambda selection: self.set_selected_option(
                             selection, module, cfg_name, cfg['options']),
                         
                     )
                     
                     if default := cfg['default_option']:
-                        menu.set(default)           
+                        menu.set(default)
+                    if selected := cfg['selected_option']:
+                        menu.set(selected)
                 
-                    menu.grid(row=self.current_row, column=1)
-                
+                    menu.grid(row=self.current_row, column=1, sticky='ew')
+                    
                 self.current_row += 1
             
             Label(self.canvas, text="").grid(row=self.current_row, column=0)
             self.current_row += 1
 
+        
+        self.canvas.columnconfigure(0, weight=0)
+        self.canvas.columnconfigure(1, weight=1)
+        
+        self.center_window()   
         
 
 
