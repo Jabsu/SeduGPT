@@ -83,10 +83,10 @@ class Main:
         return func
     
     def get_module_name(self):
-        '''Logging/debug: Selvitetään moduulin tiedostonimi.'''
+        '''Selvitetään moduulin tiedostonimi.'''
         
-        module = importlib.import_module(self.__module__)
-        return os.path.basename(module.__file__)
+        return Helpers(self).get_module_name()
+       
     
     
     def start(self):

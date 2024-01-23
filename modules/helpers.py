@@ -1,3 +1,5 @@
+import importlib
+import os
 import re
 
 class Helpers:
@@ -23,4 +25,10 @@ class Helpers:
                 return_func = func
 
         return [return_settings, return_func]
+    
+
+    def get_module_name(self):
+        '''Selvitetään moduulin tiedostonimi.'''
         
+        module = importlib.import_module(self.parent.__module__)
+        return os.path.basename(module.__file__)
