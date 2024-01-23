@@ -6,6 +6,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup as bs
 
+from .helpers import Helpers
+
 
 
 class Main:
@@ -56,7 +58,6 @@ class Main:
         }
         return settings
    
-
   
     def set_return_data(self, value, title=False):
         '''Asetetaan palautettava output.'''
@@ -73,22 +74,13 @@ class Main:
         self.message_title = title
         
         
-    def check_triggers(self, msg, changed_settings=None):
-        '''Tutkitaan, sisältääkö käyttäjän viesti __initissä__ asetettuja triggereitä ja 
-        palautetaan asiaankuuluva funktio.'''
+    def check_triggers(self, msg, user_defined_settings=None):
+        '''Tutkitaan (Helpers-classin funktiota hyödyntäen), sisältääkö käyttäjän viesti moduulissa 
+        asetettuja triggereitä ja palautetaan asiaankuuluva funktio.'''
         
         self.msg = msg
-        if changed_settings:
-            self.settings = changed_settings
-        else:
-            self.settings = self.get_settings()
-
-        for trigger, func in self.triggers.items():
-            if re.findall(trigger, self.msg, self.re_flags):
-                
-                return func
-
-        return None
+        self.settings, func = Helpers(self).check_triggers(user_defined_settings)
+        return func
     
     def get_module_name(self):
         '''Logging/debug: Selvitetään moduulin tiedostonimi.'''

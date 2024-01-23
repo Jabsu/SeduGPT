@@ -22,6 +22,7 @@
     - [x] Viesteihin irssi-tyyliset prefixit ja tageja hyödyntävä väritys
     - [x] Tkinter -> customtkinter
 - [ ] Moduulien triggerit käydään läpi vain kerran (initialisoinnin yhteydessä)
+- [x] helpers.py moduuleissa toistuvia funktioita varten
 - [ ] Textbox-tagien hyödyntäminen moduulimäärityksin
 - [ ] Textbox-emojeihin värit!
 - [x] Moduulikohtainen konfigurointi (frontend & backend)
@@ -30,7 +31,6 @@
     - [x] Asetusikkuna (modulaarisuus huomioiden)  
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
 - [ ] Toinen moduuli: Sää
-- [ ] Mahdollisesti: Tkinter -> PySide
 
 ### v0.6 — Hopea
 - [ ] EHKÄ: GPT-integraatio
