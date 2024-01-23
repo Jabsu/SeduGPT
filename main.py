@@ -88,21 +88,24 @@ class Main:
     
     def initialize_modules(self):
         
-        # self.modules = {}
         self.modules = []
 
         for mod in config.MODULES:
             module = importlib.import_module(mod)
             module_main_class = getattr(module, 'Main')()
             module_name = module_main_class.get_module_name()
-    
-            if not self.settings.get(module_name):
-                module_UI_settings = module_main_class.get_settings()
-                self.settings[module_name] = module_UI_settings
+            module_settings = module_main_class.get_settings()
+
+            # Moduulikohtaiset asetukset
+            if self.settings.get(module_name):
+                # Päivitetään tallennetut asetukset, mikäli moduulissa on määritetty uusia
+                if len(module_settings.keys()) > len(self.settings[module_name].keys()):
+                    self.settings[module_name].update(module_settings)
+            else:   
+                # Otetaan käyttöön moduulin oletusasetukset
+                self.settings[module_name] = module_settings
 
          
-            
-          
             self.modules.append(module)
 
     

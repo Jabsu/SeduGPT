@@ -1,6 +1,7 @@
 from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, CTkButton as Button, 
                            CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk,
-                           CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel)
+                           CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel,
+                           StringVar)
 from tkinter import ttk
 
 import customtkinter
@@ -79,13 +80,10 @@ class SettingsUI(Toplevel):
 
     
     def set_selected_option(self, selection, module, config_name, options=dict):
-        # value = options[selection]
         self.settings[module][config_name]['selected_option'] = selection
         
   
     def add_module_config_widgets(self):
-        
-        
 
         for module, configurations in self.settings.items():
             module_label = Label(
@@ -94,6 +92,7 @@ class SettingsUI(Toplevel):
                 text_color='white',
                 font=self.FONT_BOLD,
             )
+            
             module_label.grid(row=self.current_row, column=0, sticky='w')
             separator = ttk.Separator(self.canvas, orient='horizontal')
             separator.grid(row=self.current_row+1, column=0, columnspan=2, sticky='ew', pady=(2,10))
@@ -114,19 +113,25 @@ class SettingsUI(Toplevel):
                     for value_name, value in cfg['options'].items():
                         list_of_options.append(value_name)
                    
-
                     menu = OptionMenu(
-                        self.canvas, 
-                        values=list_of_options,
-                        command=lambda selection: self.set_selected_option(
-                            selection, module, cfg_name, cfg['options']),
-                        
+                        self.canvas,
+                        values=list_of_options
                     )
-                    
+          
                     if default := cfg['default_option']:
                         menu.set(default)
                     if selected := cfg['selected_option']:
                         menu.set(selected)
+
+                    cmd = (
+                        f"menu.configure( \
+                            command=lambda selection: self.set_selected_option( \
+                                selection, '{module}', '{cfg_name}', {cfg['options']} \
+                            ) \
+                        )" 
+                    )
+
+                    exec(cmd, locals())
                 
                     menu.grid(row=self.current_row, column=1, sticky='ew')
                     

@@ -25,22 +25,24 @@
 - [x] helpers.py moduuleissa toistuvia funktioita varten
 - [ ] Textbox-tagien hyödyntäminen moduulimäärityksin
 - [ ] Textbox-emojeihin värit!
-- [x] Moduulikohtainen konfigurointi (frontend & backend)
+- [ ] Moduulikohtainen konfigurointi (frontend & backend)
     - [x] config.py -> settings.json
     - [x] Asetusten tallentaminen ja lataaminen
-    - [x] Asetusikkuna (modulaarisuus huomioiden)  
+    - [x] Asetusikkuna (modulaarisuus huomioiden)
+    - [x] Otetaan huomioon mahdolliset moduuleissa tehdyt asetuslisäykset
+    - [ ] Skrollaus asetusikkunaan
 - [ ] Debug-moodi (logging, output oksennetaan chattiin)
-- [ ] Toinen moduuli: Sää
+- [ ] Globaali kieliasetus
+- [ ] Ennakoiva tekstinsyöttö (tab completion)
 
 ### v0.6 — Hopea
 - [ ] EHKÄ: GPT-integraatio
 - [ ] Wiki
     - [ ] Moduulikohtainen info
     - [ ] Opas moduulien tekijöille
-- [ ] Lisää moduuleja!
 
 ### v1.0 — Kulta
 - [ ] py2exe
 
-### Perfektionismi, Bertie Bottin joka maun rakeet
-- [ ] Ennakoiva tekstinsyöttö (Nokian T9?)
+### Moduulit
+- [ ] Sää
