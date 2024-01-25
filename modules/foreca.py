@@ -10,7 +10,8 @@ class Main:
     def __init__(self):
         
         self.triggers = {
-            "^sää": "start",
+            "(^| )sää( |$)": "start",
+            "weather": "start",
         }
         self.re_flags = re.I
 

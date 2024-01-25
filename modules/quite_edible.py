@@ -14,17 +14,17 @@ class Main:
 
     def __init__(self):
         
-        # Regex-triggeri -> funktio
+        # Regex trigger -> function
         self.triggers = {
-            "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|safka|pöperö": "start",
+            "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|safka|pöperö|sapuska": "start",
         }
 
-        # Regex-flagit (re.I = ignore case, re.NOFLAG = ei flageja)
+        # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
         self.re_flags = re.I
 
 
     def get_settings(self):
-        '''Määritetään asetusikkunaan lisättävät widgetit ja asetukset.'''
+        '''Default settings, widgets and labels to be shown on settings window.'''
 
         settings = {
             "campus": {
@@ -60,37 +60,36 @@ class Main:
    
   
     def set_return_data(self, value, title=False):
-        '''Asetetaan palautettava output.'''
+        '''Preparing the output for Textbox.'''
         
         self.return_value = value
 
-        # Muutetaanko mahdollinen lista stringiksi
+        # If the output is a list, will it be converted to a string?
         self.return_sanitize = True
 
-        # Jos edeltävään kyllä: merkki, jolla listan arvot erotellaan ('\n' = rivinvaihto) 
+        # If True in above: separator character for list values ('\n' = enter) 
         self.return_separator = '\n'
 
-        # Optionaalinen otsikko (False = ei otsikkoa)
+        # Optional title (False = no title)
         self.message_title = title
         
         
     def check_triggers(self, msg, user_defined_settings=None):
-        '''Tutkitaan (Helpers-classin funktiota hyödyntäen), sisältääkö käyttäjän viesti moduulissa 
-        asetettuja triggereitä ja palautetaan asiaankuuluva funktio.'''
+        '''If triggered by user message, return the specified function.'''
         
         self.msg = msg
         self.settings, func = Helpers(self).check_triggers(user_defined_settings)
         return func
     
     def get_module_name(self):
-        '''Selvitetään moduulin tiedostonimi.'''
+        '''Get the module filename.'''
         
         return Helpers(self).get_module_name()
        
     
     
     def start(self):
-        '''Moduuli tekee tehtävänsä.'''
+        '''The module does it job.'''
 
         # Jäteen huomioimatta tietyt erikoisuudet ruokalistassa
         self.ignore_entries = 'opiskeli|opetus'
@@ -118,7 +117,7 @@ class Main:
 
     
     def get_emoji(self, food):
-        '''Lisätään murkinalajille sopiva emoji.'''
+        '''Add a corresponding emoji for certain food categories.'''
         
         default_emoji = '😋'
         patterns = {
@@ -144,7 +143,7 @@ class Main:
 
 
     def get_day(self):
-        '''Selvitetään viikonpäivä ja konvertoidaan se selvälle suomen kielelle.'''
+        '''Get the current day and translate it to Finnish, if it's in English.'''
 
         conversions = {
             'Monday': 'Maanantai',
@@ -159,19 +158,19 @@ class Main:
             
         ret = None
         for weekday_en, weekday_fi in conversions.items():
-            if weekday.lower() == weekday_en.lower():
+            if weekday.lower() == weekday_en.lower() or weekday.lower() == weekday_fi.lower():
                 ret = weekday_fi
                 break
 
-        if not ret:
-            # Note-to-self: ota logging käyttöön
 
+        if not ret:
+            # Note-to-self: implement logging
             print(f"{self.get_module_name()}: Viikonpäivää ei saatu selvitettyä.")
 
         return ret     
     
     def get_menus(self):
-        '''Haetaan ruokalistat.'''
+        '''Get the menus from the specified campus.'''
 
         if selected := self.settings['campus']['selected_option']:
             campus = self.settings['campus']['options'][selected]
@@ -250,7 +249,7 @@ class Main:
             print(item)
         
 
-# Testailu
+# For testing
 if __name__ == "__main__":
     import sys
     

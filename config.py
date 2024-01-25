@@ -1,5 +1,5 @@
-# Noduulit
+# Nodules to import
 MODULES = [
-    'modules.ruokalista',
+    'modules.quite_edible',
     'modules.foreca'
 ]

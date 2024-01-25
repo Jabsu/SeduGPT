@@ -3,15 +3,14 @@ import os
 import re
 
 class Helpers:
-    '''Toistuvia funktioita moduuleille.'''
+    '''Common functions for modules.'''
     
     def __init__(self, parent):
         self.parent = parent
 
 
     def check_triggers(self, user_defined_settings=None):
-        '''Tutkitaan, sisältääkö käyttäjän viesti moduulissa asetettuja triggereitä ja palautetaan 
-        asiaankuuluva funktio.'''
+        '''If triggered by user message, return the function specified in the module.'''
         
         if user_defined_settings:
             return_settings = user_defined_settings
@@ -28,7 +27,7 @@ class Helpers:
     
 
     def get_module_name(self):
-        '''Selvitetään moduulin tiedostonimi.'''
+        '''Get the module filename.'''
         
         module = importlib.import_module(self.parent.__module__)
         return os.path.basename(module.__file__)
