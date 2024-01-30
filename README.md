@@ -1,42 +1,45 @@
 # SeduGPT
-A modular chat companion, particularly for programmer students in Sedu.
+A modular chat companion designed particularly for programming students at Sedu.
 
-Purposes: 
-- To _theoritecally_ encourage programming students to practice with Python by making modules
-- For me to have fun
-<br/>
-<br/>
-```
+SeduGPT aims to: 
+- _Theoretically_ encourage programming students to practice with Python by making modules  
+- Engage students – or at least myself – in the fine art of tomfoolery
+
+
+```  
 -===[ 𝐏𝐫𝐨𝐣𝐞𝐜𝐭 𝐒𝐭𝐚𝐭𝐮𝐬 ]===-
 
-   📝 Initial preparation
--> ⚙️ Proof of Concept  
-   🥉 Bronze  
-   🥈 Silver  
-   🥇 Gold  
-```
+📝 Initial Preparations ✔️
+⚙️ Proof of Concept ✔️
+🥉 Bronze 
+🥈 Silver  
+🥇 Gold  
+```  
 
-See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for plans and progress.
+See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans and progress.
 <br/>
 <br/>
 ## Features
 - Modular
-    - Make multiple regular expression triggers to call a specific function
-        - Data returned to chat (Tk.Textbox) can be 
-            - Currently supported formats:
-    - Easily add user interface configurations (which will be shown on settings GUI) by using a dict
-        - Currently supported interactive widgets: OptionMenu 
-    - Instructions for detailed module development coming soon
-    - Fun and useful modules might be integrated to the project
+    - Make any number of regular expression triggers (reactions to user input) to call a specific function
+        - Although this is a chatbot first and foremost, modules don't have to return anything (i.e. they can be self-contained programs)
+    - Make some quick adjustments to the (optional) chat output by choosing a type, adding a title, formatting the text (such as colors, font style), etc. 
+        - Work in progress
+    - Easily add user interface configurations (with labels and interactive widgets) by using a dict
+        - All modules have a common settings window on which the widgets will show up
+        - Currently supported interactive widgets: Tk.OptionMenu 
+    - Detailed instructions for module development coming soon
+    - Fun and useful modules might be integrated into the repository
 - Included modules
     - [quite_edible.py](): Gets the lunch menu from a selected campus
         - **Finnish only**
-        - Triggers: food related verbs/nouns
-        - Parameters: the day of week
+        - Triggers: Food related verbs/nouns (e.g. ruokana, syömme, syötiin, safka)
+        - Parameters: The day of the week (e.g. keskiviikko(na))
         - Example sentences:
             - "Mitäs tiistaina syötiin?"
             - "Mahtaako tänään olla sapuskana jotain erityisen innostavaa vai olisiko mielekkäämpää lähteä syömään esimerkiksi McDonald'siin mahdollisista terveyshaitoista piittaamatta?"
-    - [foreca.py](): Obligatory weather inquiries
+               - Parameters like 'tänään', 'huomenna' and 'eilen' are not supported yet; if the weekday is not specified, the default is today
+    - [foreca.py](): Obligatory weather inquiries – a chatbot is severely incomplete without such an important feature
         - **Work in progress**
 - In consideration: GPT integration (GPT4All)
 
