@@ -10,7 +10,7 @@ from GUI.main_window import UI
 from GUI.settings_window import SettingsUI
 import config
 
-# Ladataan moduulit
+# Import modules
 for mod in config.MODULES:
     importlib.import_module(mod)
 
@@ -25,6 +25,8 @@ class Main:
 
         self.settings_file = 'settings.json'
         self.settings = self.read_file()
+
+        self.set_main_defaults()
 
         self.initialize_modules()
         
@@ -42,10 +44,47 @@ class Main:
             pass
 
         elif args:
-            # Testiviesti (parametri)
             self.msg = args
             self.iterate_module_triggers()
            
+
+    def set_main_defaults(self):
+        '''Set or update the default settings for the main program.'''
+
+        if not self.settings.get('MAIN'):
+            self.settings['MAIN'] = {}
+        
+        settings = {
+            'language': {
+                'label': 'fi:Kieli|en:Language',
+                'interact_widget': 'OptionMenu',
+                'options': {
+                    'Suomi': 'fi',
+                    'English': 'en'
+                },
+                'default_setting': 'Suomi',
+                'selected_setting': '',
+            }
+        }
+
+        if settings.keys() > self.settings['MAIN'].keys():
+            self.settings['MAIN'].update(settings)
+
+    def set_cfgs_as_variables(self):
+        '''Dynamic creation of config variables.
+
+        Example: VALUE = self.settings['VARIABLE_NAME]['options']['selected'] 
+        --> self.VARIABLE_NAME = VALUE
+        '''
+
+        for cfg in self.settings['MAIN'].items():
+            if selected := cfg['selected_setting']:
+                value = cfg['options']['selected_setting']
+            else:
+                value = cfg['default_setting']
+
+            exec(f"self.{cfg} = {value}", locals())
+
 
     def open_settings_window(self):
         
@@ -96,13 +135,14 @@ class Main:
             module_name = module_main_class.get_module_name()
             module_settings = module_main_class.get_settings()
 
-            # Moduulikohtaiset asetukset
+            # Get module specific settings
             if self.settings.get(module_name):
-                # Päivitetään tallennetut asetukset, mikäli moduulissa on määritetty uusia
+                # Update imported settings (from settings.json) if Module.settings dict size has 
+                # been changed (i.e. new configuration widgets have been added)
                 if len(module_settings.keys()) > len(self.settings[module_name].keys()):
                     self.settings[module_name].update(module_settings)
             else:   
-                # Otetaan käyttöön moduulin oletusasetukset
+                # Add module specific defaults (Module.settings) to configurations
                 self.settings[module_name] = module_settings
 
          
@@ -110,7 +150,12 @@ class Main:
 
     
     def iterate_module_triggers(self):
-        '''Käydään läpi moduulien triggerit. (TODO: tehdään tämä vain kerran.)'''
+        '''Iterates through module triggers. 
+        
+        TO-DO: 
+        Load the triggers into memory instead of iterating through them repeatedly, so that 
+        a quarter of a millisecond would be saved on a 386 SX (@ 12 MHz, 4 MB RAM, less than 640 kB 
+        of conventional memory).'''
         
         triggered = False
 
@@ -124,25 +169,23 @@ class Main:
             
             
             
-            # Moduuli palauttaa spesifin funktion, mikäli viestistä löytyy triggerivastaavuus 
+            # If triggered by user message, module returns a specific function, which is then called
             if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
                 
                 triggered = True
                 
-                # Käynnistetään triggerin asettama funktio
                 func = getattr(self.current_mod, module_func)
                 func()
                 
-                # Botin output
                 self.bot_output(True)
 
         if not triggered:
-            # Ei triggeriä, botti oksentaa default-tekstin
+            # Not triggered by any module; bot outputs the default text
             self.bot_output(False)
 
     
     def send(self, event=None):
-        '''Käsitellään GUI:ssa lähetetty viesti.'''
+        '''Add user input to chat (with formattings) and iterate through module triggers.'''
         
         self.msg = self.UI.entry.get()
         
@@ -154,17 +197,18 @@ class Main:
         self.send_prefix('user') 
         self.UI.text_insert(self.msg+'\n', tag='msg')
         
-        # Tarkistetaan, triggeröikö viesti jonkin moduulin
         self.iterate_module_triggers()
 
 
     def sanitize(self, content):
-        '''Muutetaan listat ja dictionaryt stringeiksi.'''
+        '''Convert List to String. 
+        
+        TO-DO: Other conversions.'''
 
         ret = content
 
         if type(content) == list:
-            # Käytetään moduulin määrittelemää separaattoria listan arvoja yhdistäessä
+            # Use the separator defined in the module for joining the values
             ret = self.current_mod.return_separator.join(content)
 
         if type(content) == dict:
@@ -174,7 +218,10 @@ class Main:
     
 
     def send_prefix(self, user):
-        '''Lähetetään etuliite (HH:MM <käyttäjä>).'''
+        '''Format and send a prefix to chat (HH:MM <user>); tags (prefix, prefix2) point to colors
+        configured in main_window.py. 
+        
+        TO-DO: More dynamic/modular tag support.'''
         
         clock = time.strftime("%H:%M ")
         self.UI.text_insert(clock, 'prefix')      
@@ -194,6 +241,8 @@ class Main:
 
 
     def random_output(self):
+        '''The user message did not trigger any module, display random output instead.'''
+
         outputs = [
             'Opettelen vielä, ymmärrän tuonnempana.',
             'Pahus, menin ihan solmuun.',
@@ -205,14 +254,15 @@ class Main:
             
     
     def bot_output(self, triggered_by_module=False):
-        '''Botti oksentaa tekstiwidgettiin.'''
+        '''Bot's output to chat.'''
         
         if not triggered_by_module:
             bot_msg = self.random_output()
         else:
             bot_msg = self.current_mod.return_value
             
-            # Jos moduulin palauttama arvo ei ole string ja sanitize = True, muutetaan arvo stringiksi
+            # If the return value set in a module is not String and 'sanitize' is set to True, 
+            # the value will be converted to String
             if type(bot_msg) != 'str' and self.current_mod.return_sanitize:
                 bot_msg = self.sanitize(bot_msg)
 
@@ -220,12 +270,16 @@ class Main:
         self.send_prefix('bot') 
 
         if self.args != "--gui":
-            # Mikäli GUI ei käytössä, käytetään moduulin print-funktiota (placeholder)
-            self.current_mod.print()
+            # Use the module's print function (if implemented) when not using the GUI (placeholder)
+            # TO-DO: Finalize the commandline functionalities
+            try:
+                self.current_mod.print()
+            except:
+                print(f'{self.current_mod.get_module_name()} does not have a print function.')
         else:
             if triggered_by_module:
                 
-                # Jos moduulissa on määritelty otsikko, ulostetaan tämä ensin
+                # If set by module, add a title to the output
                 if title := self.current_mod.message_title:
                     self.UI.text_insert(title, tag='title')
                    
@@ -235,7 +289,7 @@ class Main:
 
 if __name__ == '__main__':
     
-    # Oletusparametri (--gui = lataa pääikkunan)
+    # Incomplete command line functionality
     args = '--gui'
 
     if len(sys.argv) > 1:

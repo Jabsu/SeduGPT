@@ -86,6 +86,11 @@ class SettingsUI(Toplevel):
     def add_module_config_widgets(self):
 
         for module, configurations in self.settings.items():
+            
+            if module == 'MAIN':
+                # Not a module, skip
+                continue
+
             module_label = Label(
                 self.canvas, 
                 text=f"Moduuli: {module}",
@@ -98,6 +103,12 @@ class SettingsUI(Toplevel):
             separator.grid(row=self.current_row+1, column=0, columnspan=2, sticky='ew', pady=(2,10))
             self.current_row += 2
             for cfg_name, cfg in configurations.items():
+                
+                if not cfg.get('interact_widget'):
+                    # Interactable widget not defined, jump to next configuration 
+                    continue
+
+                
                 cfg_label = Label(
                     self.canvas, 
                     text=cfg['label'],
