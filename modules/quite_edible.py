@@ -91,13 +91,13 @@ class Main:
     def start(self):
         '''The module does it job.'''
 
-        # Jäteen huomioimatta tietyt erikoisuudet ruokalistassa
+        # Ignore non-food related listings
         self.ignore_entries = 'opiskeli|opetus'
 
 
         pattern = "maanantai|tiistai|keskiviikko|torstai|perjantai|lauantai|sunnuntai"
         
-        # Tarkistetaan, sisältääkö käyttäjän viesti viikonpäivämaininnan
+        # Set the day of week to today or the one used as a parameter 
         if match := re.findall(pattern, self.msg, re.I):
             self.weekday = match[0]
         else:
@@ -105,11 +105,10 @@ class Main:
         
         if hasattr(self, 'menus') and hasattr(self, 'campus'):
             if self.menus.get(self.campus):
-                # Valitun kampuksen menu muistissa, haetaan spesifin päivän menu
+                # Campus' menu is stored in memory; retrieve the menu for a specific day  
                 self.get_specific_menu()
         else:
-            # Valitun kampuksen menu ei muistissa, KAAVITAAN* kampuksen verkkosivua
-            #  * scraping; tietoteknisen sanaston suomentaminen on toisinaan hauska haaste
+            # Campus' menu is not stored in memory; scrape the web page and retrieve the menu
             if self.get_menus():
                 self.get_specific_menu()
         
@@ -143,34 +142,23 @@ class Main:
 
 
     def get_day(self):
-        '''Get the current day and translate it to Finnish, if it's in English.'''
+        '''Return the current day of week in Finnish.'''
 
-        conversions = {
-            'Monday': 'Maanantai',
-            'Tuesday': 'Tiistai',
-            'Wednesday': 'Keskiviikko',
-            'Thursday': 'Torstai',
-            'Friday': 'Perjantai',
-            'Saturday': 'Lauantai',
-            'Sunday': 'Sunnuntai'
+        weekdays = {
+            '1': 'Maanantai',
+            '2': 'Tiistai',
+            '3': 'Keskiviikko',
+            '4': 'Torstai',
+            '5': 'Perjantai',
+            '6': 'Lauantai',
+            '7': 'Sunnuntai'
         }
-        weekday = datetime.now().strftime("%A")
+        weekday = datetime.now().strftime("%w")
+        return weekdays[weekday]
             
-        ret = None
-        for weekday_en, weekday_fi in conversions.items():
-            if weekday.lower() == weekday_en.lower() or weekday.lower() == weekday_fi.lower():
-                ret = weekday_fi
-                break
-
-
-        if not ret:
-            # Note-to-self: implement logging
-            print(f"{self.get_module_name()}: Viikonpäivää ei saatu selvitettyä.")
-
-        return ret     
-    
+     
     def get_menus(self):
-        '''Get the menus from the specified campus.'''
+        '''Get the menu for the week from a specified campus.'''
 
         if selected := self.settings['campus']['selected_option']:
             campus = self.settings['campus']['options'][selected]
@@ -215,7 +203,7 @@ class Main:
 
 
     def get_specific_menu(self):
-        '''Haetaan valitun tai kuluvan päivän ruokalista.'''
+        '''Gets the menu for today or the day specified by the user.'''
 
         self.menu = []
         
@@ -227,18 +215,20 @@ class Main:
                     if re.findall(self.ignore_entries, item, re.I):
                         continue
                     
-                    # Erikoistapaus: kasvisruokavaihtoehto samalla rivillä (separaattorina /)
+                    # Special case for irregular formatting: Make vegetarian option as a separate 
+                    # list item if it's listed on the same line as the non-vegetarian option 
+                    # (and separated with '/')
                     for i in item.split('/'):
                         emoji = self.get_emoji(i)
                         self.menu.append(f"{emoji} {i.lstrip().rstrip()}")
                     
                     
 
-        # Määritellään palautettava data
+        # Make return data configurations
         if self.menu:
             self.set_return_data(self.menu, title=f'\n{self.weekday.title()}n ruokalista:\n\n')
         else:
-            # Päivän menu hukassa
+            # No menu found
             self.set_return_data("Luvassa saattaa olla laihaa keittoa.")
         
 
