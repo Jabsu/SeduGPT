@@ -112,6 +112,8 @@ class Main:
     def iterate_module_triggers(self):
         '''Käydään läpi moduulien triggerit. (TODO: tehdään tämä vain kerran.)'''
         
+        triggered = False
+
         for module in self.modules:
             
             config = None
@@ -120,7 +122,7 @@ class Main:
             self.current_mod = module.Main()
             mod_name = self.current_mod.get_module_name()
             
-            triggered = False
+            
             
             # Moduuli palauttaa spesifin funktion, mikäli viestistä löytyy triggerivastaavuus 
             if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
@@ -193,7 +195,7 @@ class Main:
 
     def random_output(self):
         outputs = [
-            'Opettelen vielä, ymmärrän kohta.',
+            'Opettelen vielä, ymmärrän tuonnempana.',
             'Pahus, menin ihan solmuun.',
             'Pahoittelen, opettelen parhaillaan ymmärtämään toista asiaa.',
             'Ymmärrän kyllä yskäsi, mutta en juuri muuta.',
