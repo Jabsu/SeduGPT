@@ -10,7 +10,7 @@ from .helpers import Helpers
 
 
 
-class Main:
+class Module:
 
     def __init__(self):
         
@@ -239,7 +239,7 @@ class Main:
             print(item)
         
 
-# For testing
+# For testing (placeholder)
 if __name__ == "__main__":
     import sys
     
@@ -247,7 +247,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         msg = ' '.join(sys.argv[1:])
 
-    ruoka = Main()
+    ruoka = Module()
     
     if func := ruoka.check_triggers(msg):
         trigger_function = getattr(ruoka, func)

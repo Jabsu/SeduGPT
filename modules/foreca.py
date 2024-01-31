@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 
 from .helpers import Helpers
 
-class Main:
+class Module:
     
     def __init__(self):
         

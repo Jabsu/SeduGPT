@@ -9,9 +9,9 @@
 - [x] Initial (crude) GUI 🤢
 - [x] First module: quite_edible.py
 - [x] Modularity preparations
-    - [x] Initial constant (common) functions for modules
+    - [x] Initial constant (common) methods for modules
     - [x] main.py: Importing and initializing modules (config.py)
-    - [x] main.py: Iterating through check_triggers functions in modules
+    - [x] main.py: Iterating through check_triggers methods in modules
     - [x] Semi-configurable type and formatting for output   
     - [x] Output to Textbox and command prompt
 - [x] Crude command prompt functionality
@@ -21,30 +21,58 @@
     - [x] Better layout, more close representation of the final look  
     - [x] IRC-style (specifically irssi-style) formatting for messages + coloring with tags
     - [x] Tkinter -> customtkinter
-- [ ] Module triggers will be iterated through only once, at module initialization
-- [ ] Move the call functions for check_triggers and get_module_name from modules to main
-- [x] Add helpers.py for common/convenient module functions 
-- [ ] Textbox: Support for colorized emojis 
-- [ ] Module configuration (frontend & backend)
+- [x] Move common functions into a Helpers class
+- [x] Module configuration (frontend & backend)
     - [x] config.py -> settings.json
     - [x] Importing/exporting settings
     - [x] Settings window with module specific widgets
-    - [x] Handling changes in module default settings (such as new config widgets) when settings.json has been already created
-    - [ ] Scrollbar for settings window
-    - [ ] Textbox: Configurable tags (formatting) for output
-- [ ] Debug mode (with an option to output to Textbox)
-- [ ] Global language setting
-- [ ] Tab completion for input
+    - [x] Handling changes (such as new/renamed keys) on default settings
 
 ### v0.6 — Silver
+- [ ] Main configurations ❗
+    - [ ] Dynamic UI configurations
+    - [x] Internal (non-UI) configurations with dynamic class attribute creation
+- [ ] Translation handling ❗
+    - [ ] Importing and exporting (translations.json)
+    - [ ] Initial UI translations
+    - [ ] Main program translations
+    - [ ] Module-specific translations (optional)
+    - [ ] Lists for supported languages (modules and main)
+- [ ] Move the call methods for check_triggers and get_module_name from Module to Main
+- [ ] Logging
+    - [ ] Configurations
+        - [ ] Verbosity
+        - [ ] Output
+            - [ ] Textbox
+            - [ ] Console
+- [ ] Extended exception handling
+- [ ] Proper command line functionality ❗
+    - [ ] Parameter handling, default parameter(s)
+    - [ ] Provide print method on helpers.py (if not defined by module)
+- [ ] Internal versioning (better late than never, I guess)
+- [ ] UI improvements
+    - [ ] Scrollbar for settings window ❗
+    - [ ] Support for configuration descriptions/tooltips
+    - [ ] Support for Textbox tag config for modules
+    - [ ] _About_ window
+
+### Polish (Performance, Refactoring, Fancy Features)
+- [x] Translate (English -> Finnish)
+    - [x] Translate comments and any (temporary) print outputs
+    - [x] Translate README.md and TODO.md
+- [ ] Textbox: Support for colorized emojis 
+- [ ] Module triggers will be iterated through only once, at module initialization
+- [ ] Tab completion for input
+
+### Other
+- [ ] Wiki ❗
+    - [ ] Module-specific information ❗
+    - [ ] Guide and template class for 3rd party modules
 - [ ] Possibly: GPT4All integration
-- [ ] Wiki
-    - [ ] Module-specific information
-    - [ ] Guide for creating modules (required functions, default settings, etc.)
 
 ### v1.0 — Gold
-- [ ] py2exe
-
-### Included Modules
-- [x] quite_edible.py 
-- [ ] foreca.py
+- [ ] First release
+    - [ ] Binaries
+        - [ ] Windows (.exe)
+        - [ ] Debian (.deb)
+    - [ ] Changelog (for subsequent releases, at least)

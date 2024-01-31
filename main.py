@@ -17,16 +17,47 @@ for mod in config.MODULES:
 
 class Main:
     def __init__(self, args):
+        '''Initialize the main program with important variables.'''
+        
+        # Default settings
+        defaults = {
+            'language': {
+                'label': 'Language',
+                'interact_widget': 'OptionMenu',
+                'options': {
+                    'Suomi': 'fi',
+                    'English': 'en'
+                },
+                'default_option': 'Suomi',
+                'selected_option': '',
+            },
+            'internal': {
+                'bot_name': 'SeduGPT', 
+                'user_name': '', # if empty, username will be set to OS username
+                'start_with_args': '--gui',
+                'settings_file': 'settings.json'
+            }
+        }
+        
+        
+        
+        self.set_internal_cfgs_as_attributes()
+
+        # Import settings from a file
+        self.settings = self.read_file()
+        
+        # Update imported settings, if needed
+        self.update_settings('MAIN', defaults)
+
+        
+       
         
         self.args = args
-
-        self.user_name = os.getlogin()
-        self.bot_name = 'SeduGPT'
-
+        
         self.settings_file = 'settings.json'
-        self.settings = self.read_file()
-
-        self.set_main_defaults()
+        
+        
+        
 
         self.initialize_modules()
         
@@ -48,50 +79,61 @@ class Main:
             self.iterate_module_triggers()
            
 
-    def set_main_defaults(self):
-        '''Set or update the default settings for the main program.'''
-
-        if not self.settings.get('MAIN'):
-            self.settings['MAIN'] = {}
+    def update_settings(self, module, defaults):
+        '''Update the settings dictionary with new or renamed keys.'''
+              
+        settings = self.settings
         
-        settings = {
-            'language': {
-                'label': 'fi:Kieli|en:Language',
-                'interact_widget': 'OptionMenu',
-                'options': {
-                    'Suomi': 'fi',
-                    'English': 'en'
-                },
-                'default_setting': 'Suomi',
-                'selected_setting': '',
-            }
+        if not settings.get(module):
+            self.settings[module] = defaults
+            return
+        
+        for container, cfgs in defaults.items():
+            if not container in settings[module].keys():
+                settings[module][container] = defaults[container]
+
+            for cfg, value in cfgs.items():
+                if not settings[module][container].get(cfg):
+                    settings[module][container][cfg] = value
+
+        # Finally, rearrange the dict so that it starts with the 'MAIN' key
+        self.settings = {
+            'MAIN': settings['MAIN'], 
+            **{key: settings[key] for key in settings if key != 'MAIN'}
         }
 
-        if settings.keys() > self.settings['MAIN'].keys():
-            self.settings['MAIN'].update(settings)
+        
 
-    def set_cfgs_as_variables(self):
-        '''Dynamic creation of config variables.
+    def set_internal_cfgs_as_attributes(self):
+        '''Dynamic creation of config attributes.
 
         Example: VALUE = self.settings['VARIABLE_NAME]['options']['selected'] 
         --> self.VARIABLE_NAME = VALUE
         '''
+         
+        for cfg, value in self.settings['MAIN']['internal'].items():
+            if not f'self.{cfg}' in locals():
+                exec(f"self.{cfg} = {value}", locals())
 
-        for cfg in self.settings['MAIN'].items():
-            if selected := cfg['selected_setting']:
-                value = cfg['options']['selected_setting']
-            else:
-                value = cfg['default_setting']
+    def set_UI_cfgs_as_attributes(self):
+        '''Set attributes for specific UI configurations, for convenience.'''
 
-            exec(f"self.{cfg} = {value}", locals())
+        # Unless specified, user name defaults to OS user
+        # TO-DO: Make this non-internal (i.e. configurable on the UI)
+        if custom_user := self.settings['MAIN']['internal']['user_name']:
+            self.user_name = custom_user
+        else:
+            self.user_name = os.getlogin()
+
+        
+        
 
 
     def open_settings_window(self):
         
         self.cfgUI = SettingsUI(self.UI, self.settings)
         
-        self.cfgUI.add_main_config_widgets()
-        self.cfgUI.add_module_config_widgets()
+        self.cfgUI.add_config_widgets()
 
         self.cfgUI.protocol("WM_DELETE_WINDOW", lambda: self.settings_window_closed())
         
@@ -131,21 +173,12 @@ class Main:
 
         for mod in config.MODULES:
             module = importlib.import_module(mod)
-            module_main_class = getattr(module, 'Main')()
+            module_main_class = getattr(module, 'Module')()
             module_name = module_main_class.get_module_name()
             module_settings = module_main_class.get_settings()
 
-            # Get module specific settings
-            if self.settings.get(module_name):
-                # Update imported settings (from settings.json) if Module.settings dict size has 
-                # been changed (i.e. new configuration widgets have been added)
-                if len(module_settings.keys()) > len(self.settings[module_name].keys()):
-                    self.settings[module_name].update(module_settings)
-            else:   
-                # Add module specific defaults (Module.settings) to configurations
-                self.settings[module_name] = module_settings
-
-         
+            self.update_settings(module_name, module_settings)
+            
             self.modules.append(module)
 
     
@@ -164,12 +197,12 @@ class Main:
             config = None
 
             
-            self.current_mod = module.Main()
+            self.current_mod = module.Module()
             mod_name = self.current_mod.get_module_name()
             
             
             
-            # If triggered by user message, module returns a specific function, which is then called
+            # If triggered by user message, module returns a specific method, which is then called
             if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
                 
                 triggered = True
@@ -270,12 +303,12 @@ class Main:
         self.send_prefix('bot') 
 
         if self.args != "--gui":
-            # Use the module's print function (if implemented) when not using the GUI (placeholder)
-            # TO-DO: Finalize the commandline functionalities
+            # Use the module's print method (if implemented) when not using the GUI
+            # TO-DO: Finalize the command line functionalities
             try:
                 self.current_mod.print()
             except:
-                print(f'{self.current_mod.get_module_name()} does not have a print function.')
+                print(f'{self.current_mod.get_module_name()} does not have a print method.')
         else:
             if triggered_by_module:
                 

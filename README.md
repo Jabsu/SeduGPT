@@ -11,7 +11,7 @@ SeduGPT aims to:
 
 📝 Initial Preparations ✔️
 ⚙️ Proof of Concept ✔️
-🥉 Bronze 
+🥉 Bronze ✔️
 🥈 Silver  
 🥇 Gold  
 ```  

@@ -3,14 +3,14 @@ import os
 import re
 
 class Helpers:
-    '''Common functions for modules.'''
+    '''Helper functions for modules.'''
     
     def __init__(self, parent):
         self.parent = parent
 
 
     def check_triggers(self, user_defined_settings=None):
-        '''If triggered by user message, return the function specified in the module.'''
+        '''If triggered by user message, return the method specified in the module.'''
         
         if user_defined_settings:
             return_settings = user_defined_settings

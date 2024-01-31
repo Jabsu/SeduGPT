@@ -71,9 +71,6 @@ class SettingsUI(Toplevel):
         self.canvas.pack(fill='both', padx=20, pady=20)
         self.scrollbar = Scrollbar(self.canvas)
     
-    def add_main_config_widgets(self):
-        pass
-
     
     def add_specific_config_widget(self):
         pass
@@ -83,14 +80,11 @@ class SettingsUI(Toplevel):
         self.settings[module][config_name]['selected_option'] = selection
         
   
-    def add_module_config_widgets(self):
+    def add_config_widgets(self):
 
         for module, configurations in self.settings.items():
             
-            if module == 'MAIN':
-                # Not a module, skip
-                continue
-
+            
             module_label = Label(
                 self.canvas, 
                 text=f"Moduuli: {module}",
