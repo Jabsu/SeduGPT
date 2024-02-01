@@ -25,36 +25,31 @@ class Main:
                 'label': 'Language',
                 'interact_widget': 'OptionMenu',
                 'options': {
-                    'Suomi': 'fi',
+                    'Finnish': 'fi',
                     'English': 'en'
                 },
-                'default_option': 'Suomi',
+                'default_option': 'Finnish',
                 'selected_option': '',
             },
             'internal': {
                 'bot_name': 'SeduGPT', 
                 'user_name': '', # if empty, username will be set to OS username
-                'start_with_args': '--gui',
-                'settings_file': 'settings.json'
+                'start_with_args': '--gui', # placeholder
             }
         }
         
-        
-        
-        self.set_internal_cfgs_as_attributes()
-
         # Import settings from a file
         self.settings = self.read_file()
-        
+
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
 
-        
-       
+        # Dynamic attribute creation
+        self.set_settings_as_attributes()
         
         self.args = args
         
-        self.settings_file = 'settings.json'
+        
         
         
         
@@ -102,31 +97,62 @@ class Main:
             **{key: settings[key] for key in settings if key != 'MAIN'}
         }
 
+
+    def create_attribute(self, cfg, value):
+        '''Create attributes and apply special functions/methods for certain settings.'''
         
+        # create_attr: creates the attribute with the defined value, unless set to:
+        #        False — skip attribute creation
+        #   'func_ret' — create the attribute with the value returned by 'function'
+        
+        # rename_attr: If not '', use a defined name for the attribute
 
-    def set_internal_cfgs_as_attributes(self):
-        '''Dynamic creation of config attributes.
+        special_operations = {
+            'user_name': {
+                'condition_satisfied': value == '',
+                'function': lambda: os.getlogin(),
+                'create_attr': 'func_ret',
+                'rename_attr': '',
+            },
+        }
+    
+        create_attribute = True
+        
+        for attr, ops in special_operations.items():
+            if cfg == attr and ops['condition_satisfied']:
+                special = True
+                if ops['function']:
+                    function_return = ops['function']()
+                if value_container := ops['create_attr']:
+                    if value_container == 'func_ret':
+                        value = function_return
+                    else:
+                        value = value_container
+                    if renamed := ops['rename_attr']:
+                        cfg = renamed
+                else:
+                    create_attribute = False
+                break
+        
+        if create_attribute:
+            exec(f"self.{cfg} = '{value}'", locals())
+                
 
-        Example: VALUE = self.settings['VARIABLE_NAME]['options']['selected'] 
-        --> self.VARIABLE_NAME = VALUE
-        '''
+    def set_settings_as_attributes(self):
+        '''Dynamic attribute creation with keys and values used in main settings.'''
          
-        for cfg, value in self.settings['MAIN']['internal'].items():
-            if not f'self.{cfg}' in locals():
-                exec(f"self.{cfg} = {value}", locals())
-
-    def set_UI_cfgs_as_attributes(self):
-        '''Set attributes for specific UI configurations, for convenience.'''
-
-        # Unless specified, user name defaults to OS user
-        # TO-DO: Make this non-internal (i.e. configurable on the UI)
-        if custom_user := self.settings['MAIN']['internal']['user_name']:
-            self.user_name = custom_user
-        else:
-            self.user_name = os.getlogin()
-
-        
-        
+        for cat, contents in self.settings['MAIN'].items():
+            if contents.get('interact_widget'):
+                # Create attributes from UI settings
+                if selected := contents['selected_option']:
+                    value = contents['options'][selected]
+                else:
+                    value = contents['options'][contents['default_option']]
+                self.create_attribute(cat, value)
+            else:
+                # Create attributes from non-UI settings (such as )
+                for cfg, value in contents.items():
+                    self.create_attribute(cfg, value)
 
 
     def open_settings_window(self):
@@ -150,9 +176,9 @@ class Main:
     def read_file(self):
         
         data = {}
-        if os.path.exists(self.settings_file):
+        if os.path.exists(config.SETTINGS_FILE):
             try:
-                with open(self.settings_file, 'r') as f:
+                with open(config.SETTINGS_FILE, 'r') as f:
                     data = json.load(f)
             except:
                 data = {}
@@ -163,7 +189,7 @@ class Main:
         return data
             
     def save_file(self, settings):
-        with open(self.settings_file, 'w') as f:
+        with open(config.SETTINGS_FILE, 'w') as f:
             json.dump(settings, f, indent=4)
 
     
