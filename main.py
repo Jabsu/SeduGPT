@@ -3,11 +3,12 @@ import random
 import importlib
 import time
 import os
-import json
 
 
 from GUI.main_window import UI
 from GUI.settings_window import SettingsUI
+from helpers import Helpers
+
 import config
 
 # Import modules
@@ -16,10 +17,11 @@ for mod in config.MODULES:
 
 
 class Main:
+
     def __init__(self, args):
         '''Initialize the main program with important variables.'''
         
-        # Default settings
+        # Default settings (main)
         defaults = {
             'language': {
                 'label': 'Language',
@@ -37,9 +39,25 @@ class Main:
                 'start_with_args': '--gui', # placeholder
             }
         }
+
+        translations = {
+            'UI': {
+                'English': {
+                    'en': 'English',
+                    'fi': 'Suomi',
+                }
+            },
+            'other': {
+
+            }
+        }
+        
         
         # Import settings from a file
-        self.settings = self.read_file()
+        self.settings = Helpers().read_file(config.SETTINGS_FILE)
+
+        # Import translations from a file
+        self.translations = Helpers().read_file(config.TRANSLATIONS_FILE)
 
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
@@ -169,28 +187,8 @@ class Main:
 
     def settings_window_closed(self):
         self.settings = self.cfgUI.settings
-        self.save_file(self.settings)
+        self.save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
-
-    
-    def read_file(self):
-        
-        data = {}
-        if os.path.exists(config.SETTINGS_FILE):
-            try:
-                with open(config.SETTINGS_FILE, 'r') as f:
-                    data = json.load(f)
-            except:
-                data = {}
-        
-            if type(data) != dict:
-                data = {}
-
-        return data
-            
-    def save_file(self, settings):
-        with open(config.SETTINGS_FILE, 'w') as f:
-            json.dump(settings, f, indent=4)
 
     
     def initialize_modules(self):
@@ -348,9 +346,11 @@ class Main:
 
 if __name__ == '__main__':
     
+    # Append current directory to system path (top-level package import hack)
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
     # Incomplete command line functionality
     args = '--gui'
-
     if len(sys.argv) > 1:
         args = ' '.join(sys.argv[1:])
     

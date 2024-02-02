@@ -3,10 +3,13 @@ import re
 
 from bs4 import BeautifulSoup as bs 
 
-from .helpers import Helpers
+from helpers import Helpers
+
+
 
 class Module:
-    
+    '''Obligatory weather inquiries. WORK IN PROGRESS; no functionality at the moment.'''
+
     def __init__(self):
         
         self.triggers = {
@@ -53,31 +56,20 @@ class Module:
  
         return settings
     
-
-    def check_triggers(self, msg, changed_settings=None):
-        '''Tutkitaan, sisältääkö käyttäjän viesti __initissä__ asetettuja triggereitä ja 
-        palautetaan asiaankuuluva funktio.'''
+    
+    def check_triggers(self, msg, user_defined_settings=None):
+        '''If triggered by user message, return the specified function.'''
         
         self.msg = msg
-        if changed_settings:
-            self.settings = changed_settings
-        else:
-            self.settings = self.get_settings()
-
-        for trigger, func in self.triggers.items():
-            if re.findall(trigger, self.msg, self.re_flags):
-                
-                return func
-
-        return None
-
-    def set_return_data(self):
-        pass
-
+        self.settings, func = Helpers(self).check_triggers(user_defined_settings)
+        return func
+    
+    
     def get_module_name(self):
-        '''Selvitetään moduulin tiedostonimi.'''
+        '''Get the module filename.'''
         
         return Helpers(self).get_module_name()
+    
 
     def start(self):
         url_prefix = "https://foreca.mobi/spot.php?l="
