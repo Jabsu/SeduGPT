@@ -187,7 +187,7 @@ class Main:
 
     def settings_window_closed(self):
         self.settings = self.cfgUI.settings
-        self.save_file(config.SETTINGS_FILE, self.settings)
+        Helpers().save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
 
     
