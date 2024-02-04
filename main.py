@@ -8,6 +8,7 @@ import os
 from GUI.main_window import UI
 from GUI.settings_window import SettingsUI
 from helpers import Helpers
+from translations import Translations
 
 import config
 
@@ -40,19 +41,9 @@ class Main:
             }
         }
 
-        translations = {
-            'UI': {
-                'English': {
-                    'en': 'English',
-                    'fi': 'Suomi',
-                }
-            },
-            'other': {
+        self.Tr = Translations()
+        self.language = 'en'
 
-            }
-        }
-        
-        
         # Import settings from a file
         self.settings = Helpers().read_file(config.SETTINGS_FILE)
 
@@ -61,18 +52,14 @@ class Main:
 
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
-
+        
         # Dynamic attribute creation
         self.set_settings_as_attributes()
         
         self.args = args
-        
-        
-        
-        
-        
-
+      
         self.initialize_modules()
+        
         
         if args == '--gui':
             # GUI
@@ -166,7 +153,7 @@ class Main:
                     value = contents['options'][selected]
                 else:
                     value = contents['options'][contents['default_option']]
-                self.create_attribute(cat, value)
+                self.create_attribute(cat, self.Tr.translate(value, self.from_to))
             else:
                 # Create attributes from non-UI settings (such as )
                 for cfg, value in contents.items():
@@ -175,7 +162,7 @@ class Main:
 
     def open_settings_window(self):
         
-        self.cfgUI = SettingsUI(self.UI, self.settings)
+        self.cfgUI = SettingsUI(self, self.settings)
         
         self.cfgUI.add_config_widgets()
 
@@ -187,7 +174,7 @@ class Main:
 
     def settings_window_closed(self):
         self.settings = self.cfgUI.settings
-        self.save_file(config.SETTINGS_FILE, self.settings)
+        Helpers().save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
 
     

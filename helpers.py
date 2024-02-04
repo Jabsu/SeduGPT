@@ -24,8 +24,9 @@ class Helpers:
             if type(data) != dict:
                 data = {}
 
-            return data
+        return data
             
+    
     def save_file(self, file, data=dict):
         '''Export dict to .json file.'''
         

@@ -22,7 +22,7 @@ class Module:
 
 
     def get_settings(self):
-        '''Default settings, widgets and labels to be shown on settings window.'''
+        '''Return UI and/or other settings.'''
 
         settings = {
             "campus": {
@@ -52,9 +52,32 @@ class Module:
                 },
                 "default_option": "Sedu Seinäjoki, Suupohjantie",
                 "selected_option": "",
+            },
+            "language": {
+                "label": "Language",
+                "interact_widget": "OptionMenu",
+                "interact_widget_disabled": True,
+                "sync_with_main": False,
+                "options": {
+                    'English': 'en',
+                    'Finnish': 'fi',
+                },
+                "default_option": "Finnish",
+                "selected_option": "",
+            },
+        }
+
+        return settings
+    
+    def get_translations(self):
+        '''Return translations.'''
+
+        translations = {
+            "fi-en": {
+                "Kampus": "Campus",
             }
         }
-        return settings
+        return translations
    
   
     def set_return_data(self, value, title=False):

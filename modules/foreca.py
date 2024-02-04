@@ -19,6 +19,8 @@ class Module:
         self.re_flags = re.I
 
     def get_settings(self):
+        '''Return UI and/or other settings.'''
+        
         settings = {
             "station": {
                 "label": "Havaintoasema",
@@ -30,13 +32,15 @@ class Module:
                 "selected_option": "",
             },
             "language": {
-                "label": "Kieli",
+                "label": "Language",
                 "interact_widget": "OptionMenu",
+                "interact_widget_disabled": False,
+                "sync_with_main": True,
                 "options": {
-                    "Englanti": "en",
-                    "Suomi": "fi",
+                    'English': 'en',
+                    'Finnish': 'fi',
                 },
-                "default_option": "Suomi",
+                "default_option": "en",
                 "selected_option": "",
             },
             "units": {
@@ -53,9 +57,18 @@ class Module:
                 "selected_option": "",
             }
         }
- 
+
         return settings
     
+    def get_translations(self):
+        '''Return translations.'''
+
+        translations = {
+            "fi-en": {
+                "Havaintoasema": "Observation station"
+            }
+        }
+        return translations
     
     def check_triggers(self, msg, user_defined_settings=None):
         '''If triggered by user message, return the specified function.'''
@@ -64,7 +77,7 @@ class Module:
         self.settings, func = Helpers(self).check_triggers(user_defined_settings)
         return func
     
-    
+
     def get_module_name(self):
         '''Get the module filename.'''
         

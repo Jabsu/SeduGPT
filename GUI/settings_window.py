@@ -3,17 +3,24 @@ from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, 
                            CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel,
                            StringVar)
 from tkinter import ttk
-
 import customtkinter
 
-class SettingsUI(Toplevel):
-    def __init__(self, main_window, settings):
-        customtkinter.deactivate_automatic_dpi_awareness()
-        super().__init__(main_window)
-        
-        self.main_window = main_window
 
-        self.title(f"Asetukset")
+
+class SettingsUI(Toplevel):
+
+    def __init__(self, parent, settings):
+        customtkinter.deactivate_automatic_dpi_awareness()
+        super().__init__(parent.UI)
+
+        
+        self.main_window = parent.UI
+        self.Tr = parent.Tr
+
+        self.language = parent.language
+        self.from_to = f"en-{self.language}"
+
+        self.title(self.Tr.translate("Settings", self.from_to))
         self.settings = settings
         
         width = self.main_window.winfo_reqwidth() / 2
@@ -40,8 +47,7 @@ class SettingsUI(Toplevel):
         
 
     def center_window(self):
-        '''Keskitetään asetusikkuna suhteessa pääikkunaan.'''
-
+        
         main_width = self.main_window.winfo_reqwidth()
         main_height = self.main_window.winfo_reqheight()
 
@@ -87,7 +93,7 @@ class SettingsUI(Toplevel):
             
             module_label = Label(
                 self.canvas, 
-                text=f"Moduuli: {module}",
+                text=f"{self.Tr.translate('Module', self.from_to)}: {module}",
                 text_color='white',
                 font=self.FONT_BOLD,
             )
@@ -102,10 +108,14 @@ class SettingsUI(Toplevel):
                     # Interactable widget not defined, jump to next configuration 
                     continue
 
-                
+                if cfg_name == 'language':
+                    mod = 'MAIN'
+                else:
+                    mod = module
+
                 cfg_label = Label(
                     self.canvas, 
-                    text=cfg['label'],
+                    text=self.Tr.translate(cfg['label'], self.from_to, mod),
                     font=self.FONT,
                     )
                 cfg_label.grid(row=self.current_row, column=0, sticky='e', padx=(0,10))
@@ -115,7 +125,14 @@ class SettingsUI(Toplevel):
 
                     list_of_options = []
                     
-                    for value_name, value in cfg['options'].items():
+                    options = {}
+                    
+                    
+                    for key, value in cfg['options'].items():
+                        trans = self.Tr.translate(key, self.from_to, mod)
+                        options[trans] = value
+
+                    for value_name in options.keys():
                         list_of_options.append(value_name)
                    
                     menu = OptionMenu(
@@ -123,22 +140,29 @@ class SettingsUI(Toplevel):
                         values=list_of_options
                     )
           
-                    if default := cfg['default_option']:
-                        menu.set(default)
-                    if selected := cfg['selected_option']:
-                        menu.set(selected)
+                    
+                    if selection := cfg['selected_option']:
+                        pass
+                    elif selection := cfg['default_option']:
+                        pass
+
+                    menu.set(self.Tr.translate(selection, self.from_to, mod))
 
                     cmd = (
                         f"menu.configure( \
                             command=lambda selection: self.set_selected_option( \
-                                selection, '{module}', '{cfg_name}', {cfg['options']} \
+                                selection, '{module}', '{cfg_name}', {options} \
                             ) \
                         )" 
                     )
 
                     exec(cmd, locals())
+
+                    if cfg.get("interact_widget_disabled"):
+                        menu.configure(state='disabled')
                 
                     menu.grid(row=self.current_row, column=1, sticky='ew')
+                
                     
                 self.current_row += 1
             
