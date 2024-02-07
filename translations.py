@@ -6,6 +6,7 @@ class Translations:
         dictionary = {
             'MAIN': {
                 'en-fi': {
+                    'Main Settings': 'Pääasetukset',
                     'Settings': 'Asetukset',
                     'Language': 'Kieli',
                     'English': 'Englanti',

@@ -62,7 +62,7 @@ class Module:
                     'English': 'en',
                     'Finnish': 'fi',
                 },
-                "default_option": "Finnish",
+                "default_option": "fi",
                 "selected_option": "",
             },
         }

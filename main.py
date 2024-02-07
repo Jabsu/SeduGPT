@@ -31,18 +31,17 @@ class Main:
                     'Finnish': 'fi',
                     'English': 'en'
                 },
-                'default_option': 'Finnish',
+                'default_option': 'fi',
                 'selected_option': '',
             },
             'internal': {
-                'bot_name': 'SeduGPT', 
+                'bot_name': 'SeduGPT',
                 'user_name': '', # if empty, username will be set to OS username
                 'start_with_args': '--gui', # placeholder
             }
         }
 
         self.Tr = Translations()
-        self.language = 'en'
 
         # Import settings from a file
         self.settings = Helpers().read_file(config.SETTINGS_FILE)
@@ -78,6 +77,22 @@ class Main:
             self.msg = args
             self.iterate_module_triggers()
            
+    def language(self):
+        
+        self.language = 'en'
+        
+        lang_dict = self.settings['MAIN']['language']
+        if selected_lang := lang_dict['selected_option']:
+            pass
+        else:
+            selected_lang = lang_dict['default_option']
+  
+        
+        for k, v in lang_dict['options'].items():
+            if selected_lang == v:
+                self.language = v
+     
+
 
     def update_settings(self, module, defaults):
         '''Update the settings dictionary with new or renamed keys.'''
@@ -102,6 +117,14 @@ class Main:
             **{key: settings[key] for key in settings if key != 'MAIN'}
         }
 
+
+    def _get_selected(self, cfg):
+      
+        if selected := cfg['selected_option']:
+            return selected 
+        else:
+            return cfg['default_option']
+    
 
     def create_attribute(self, cfg, value):
         '''Create attributes and apply special functions/methods for certain settings.'''
@@ -149,13 +172,10 @@ class Main:
         for cat, contents in self.settings['MAIN'].items():
             if contents.get('interact_widget'):
                 # Create attributes from UI settings
-                if selected := contents['selected_option']:
-                    value = contents['options'][selected]
-                else:
-                    value = contents['options'][contents['default_option']]
-                self.create_attribute(cat, self.Tr.translate(value, self.from_to))
+                value = self._get_selected(contents)
+                self.create_attribute(cat, value)
             else:
-                # Create attributes from non-UI settings (such as )
+                # Create attributes from non-UI settings (such as "internal")
                 for cfg, value in contents.items():
                     self.create_attribute(cfg, value)
 
@@ -173,9 +193,10 @@ class Main:
 
 
     def settings_window_closed(self):
-        self.settings = self.cfgUI.settings
+        self.settings = self.cfgUI.settings_copy
         Helpers().save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
+        self.set_settings_as_attributes()
 
     
     def initialize_modules(self):

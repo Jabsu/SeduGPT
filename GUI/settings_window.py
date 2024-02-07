@@ -21,8 +21,10 @@ class SettingsUI(Toplevel):
         self.from_to = f"en-{self.language}"
 
         self.title(self.Tr.translate("Settings", self.from_to))
-        self.settings = settings
         
+        self.settings = settings
+        self.settings_copy = settings
+   
         width = self.main_window.winfo_reqwidth() / 2
         height = self.main_window.winfo_reqheight() / 2
 
@@ -83,17 +85,29 @@ class SettingsUI(Toplevel):
 
     
     def set_selected_option(self, selection, module, config_name, options=dict):
-        self.settings[module][config_name]['selected_option'] = selection
+        
+        try:
+            value = self.settings[module][config_name]['options'][selection]
+        except KeyError:
+            value = self.settings_copy[module][config_name]['options'][selection]
+        
+        self.settings[module][config_name]['selected_option'] = value
         
   
     def add_config_widgets(self):
 
         for module, configurations in self.settings.items():
             
+            self.settings_copy[module] = configurations
             
+            if module == 'MAIN':
+                label_text = f"{self.Tr.translate('Main Settings', self.from_to)}"
+            else:
+                label_text = f"{self.Tr.translate('Module', self.from_to)}: {module}"
+
             module_label = Label(
                 self.canvas, 
-                text=f"{self.Tr.translate('Module', self.from_to)}: {module}",
+                text=label_text,
                 text_color='white',
                 font=self.FONT_BOLD,
             )
@@ -127,10 +141,29 @@ class SettingsUI(Toplevel):
                     
                     options = {}
                     
-                    
+                 
+                    selected = False
+
                     for key, value in cfg['options'].items():
+                        
                         trans = self.Tr.translate(key, self.from_to, mod)
                         options[trans] = value
+
+                        try:
+                            self.settings_copy[module][cfg_name]['options'] = {}
+                        except KeyError:
+                            pass
+                        
+                        
+
+                        if selected := cfg['selected_option']:
+                            pass
+                        elif selected := cfg['default_option']:
+                            pass
+                        if selected == value:
+                            selected_option = trans
+                    
+                    self.settings_copy[module][cfg_name]['options'].update(options)
 
                     for value_name in options.keys():
                         list_of_options.append(value_name)
@@ -139,14 +172,9 @@ class SettingsUI(Toplevel):
                         self.canvas,
                         values=list_of_options
                     )
-          
-                    
-                    if selection := cfg['selected_option']:
-                        pass
-                    elif selection := cfg['default_option']:
-                        pass
 
-                    menu.set(self.Tr.translate(selection, self.from_to, mod))
+                    if selected:
+                        menu.set(selected_option)
 
                     cmd = (
                         f"menu.configure( \
