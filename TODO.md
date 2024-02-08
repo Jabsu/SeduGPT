@@ -29,15 +29,13 @@
     - [x] Handling changes (such as new/renamed keys) on default settings
 
 ### v0.6 — Silver
-- [ ] Main configurations ❗
-    - [ ] Dynamic UI configurations
-    - [x] Internal (non-UI) configurations with dynamic class attribute creation
-- [ ] Translation handling ❗
-    - [ ] Importing and exporting (translations.json)
-    - [ ] Initial UI translations
-    - [ ] Main program translations
-    - [ ] Module-specific translations (optional)
-    - [ ] Lists for supported languages (modules and main)
+- [x] Main configurations
+    - [x] UI and internal configurations
+    - [x] Dynamic class attribute creation
+- [x] Translation handling
+    - [x] Initial UI translations
+    - [x] Main program translations
+    - [x] Module-specific translations
 - [ ] Move the call methods for check_triggers and get_module_name from Module to Main
 - [ ] Logging
     - [ ] Configurations

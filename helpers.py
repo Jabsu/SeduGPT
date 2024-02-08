@@ -24,8 +24,9 @@ class Helpers:
             if type(data) != dict:
                 data = {}
 
-            return data
+        return data
             
+    
     def save_file(self, file, data=dict):
         '''Export dict to .json file.'''
         
@@ -49,6 +50,27 @@ class Helpers:
 
         return [return_settings, return_func]
     
+
+    def get_selected_option(self, module=str, category=str) -> tuple:
+        '''Returns the selected/default option and value for a setting.'''
+
+        cfg = self.parent.settings[module][category]
+        
+        selected_key = None
+        selected_value = None
+        
+
+        if selected_value := cfg['selected_option']:
+            pass
+        else:
+            selected_value = cfg['default_option']
+        
+        for key, value in cfg['options']:
+            if selected_value == value:
+                selected_key = key
+
+        return (selected_key, selected_value) 
+
 
     def get_module_name(self):
         '''Returns the filename of the parent class.'''

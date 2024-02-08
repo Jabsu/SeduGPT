@@ -3,21 +3,30 @@ from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, 
                            CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel,
                            StringVar)
 from tkinter import ttk
-
 import customtkinter
 
-class SettingsUI(Toplevel):
-    def __init__(self, main_window, settings):
-        customtkinter.deactivate_automatic_dpi_awareness()
-        super().__init__(main_window)
-        
-        self.main_window = main_window
 
-        self.title(f"Asetukset")
-        self.settings = settings
+
+class SettingsUI(Toplevel):
+
+    def __init__(self, parent, settings):
+        customtkinter.deactivate_automatic_dpi_awareness()
+        super().__init__(parent.UI)
+
         
+        self.main_window = parent.UI
+        self.Tr = parent.Tr
+
+        self.language = parent.language
+        self.from_to = f"en-{self.language}"
+
+        self.title(self.Tr.translate("Settings", self.from_to))
+        
+        self.settings = settings
+        self.settings_copy = settings
+   
         width = self.main_window.winfo_reqwidth() / 2
-        height = self.main_window.winfo_reqheight() / 2
+        height = int(self.main_window.winfo_reqheight() / 1.25) 
 
         self.minsize(width, height)
 
@@ -40,8 +49,7 @@ class SettingsUI(Toplevel):
         
 
     def center_window(self):
-        '''Keskitetään asetusikkuna suhteessa pääikkunaan.'''
-
+        
         main_width = self.main_window.winfo_reqwidth()
         main_height = self.main_window.winfo_reqheight()
 
@@ -77,17 +85,29 @@ class SettingsUI(Toplevel):
 
     
     def set_selected_option(self, selection, module, config_name, options=dict):
-        self.settings[module][config_name]['selected_option'] = selection
+        
+        try:
+            value = self.settings[module][config_name]['options'][selection]
+        except KeyError:
+            value = self.settings_copy[module][config_name]['options'][selection]
+        
+        self.settings[module][config_name]['selected_option'] = value
         
   
     def add_config_widgets(self):
 
         for module, configurations in self.settings.items():
             
+            self.settings_copy[module] = configurations
             
+            if module == 'MAIN':
+                label_text = f"{self.Tr.translate('Main Settings', self.from_to)}"
+            else:
+                label_text = f"{self.Tr.translate('Module', self.from_to)}: {module}"
+
             module_label = Label(
                 self.canvas, 
-                text=f"Moduuli: {module}",
+                text=label_text,
                 text_color='white',
                 font=self.FONT_BOLD,
             )
@@ -102,10 +122,14 @@ class SettingsUI(Toplevel):
                     # Interactable widget not defined, jump to next configuration 
                     continue
 
-                
+                if cfg_name == 'language':
+                    mod = 'MAIN'
+                else:
+                    mod = module
+
                 cfg_label = Label(
                     self.canvas, 
-                    text=cfg['label'],
+                    text=self.Tr.translate(cfg['label'], self.from_to, mod),
                     font=self.FONT,
                     )
                 cfg_label.grid(row=self.current_row, column=0, sticky='e', padx=(0,10))
@@ -114,31 +138,57 @@ class SettingsUI(Toplevel):
                  
 
                     list_of_options = []
+                    options = {}
+                    selected_option = ""
+
+                    for key, value in cfg['options'].items():
+                        
+                        
+                        trans = self.Tr.translate(key, self.from_to, mod)
+                        options[trans] = value
+
+                        try:
+                            self.settings_copy[module][cfg_name]['options'] = {}
+                        except KeyError:
+                            pass
+                        
+                        
+
+                        if selected := cfg['selected_option']:
+                            pass
+                        elif selected := cfg['default_option']:
+                            pass
+                        if selected == value:
+                            selected_option = trans
                     
-                    for value_name, value in cfg['options'].items():
+                    self.settings_copy[module][cfg_name]['options'].update(options)
+
+                    for value_name in options.keys():
                         list_of_options.append(value_name)
                    
                     menu = OptionMenu(
                         self.canvas,
                         values=list_of_options
                     )
-          
-                    if default := cfg['default_option']:
-                        menu.set(default)
-                    if selected := cfg['selected_option']:
-                        menu.set(selected)
+                
+                    if selected_option:
+                        menu.set(selected_option)
 
                     cmd = (
                         f"menu.configure( \
                             command=lambda selection: self.set_selected_option( \
-                                selection, '{module}', '{cfg_name}', {cfg['options']} \
+                                selection, '{module}', '{cfg_name}', {options} \
                             ) \
                         )" 
                     )
 
                     exec(cmd, locals())
+
+                    if cfg.get("interact_widget_disabled"):
+                        menu.configure(state='disabled')
                 
                     menu.grid(row=self.current_row, column=1, sticky='ew')
+                
                     
                 self.current_row += 1
             

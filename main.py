@@ -8,6 +8,7 @@ import os
 from GUI.main_window import UI
 from GUI.settings_window import SettingsUI
 from helpers import Helpers
+from translations import Translations
 
 import config
 
@@ -19,7 +20,10 @@ for mod in config.MODULES:
 class Main:
 
     def __init__(self, args):
-        '''Initialize the main program with important variables.'''
+        '''Initialize defaults, module configurations, etc.'''
+
+        self.Help = Helpers(self)
+        self.Tr = Translations()
         
         # Default settings (main)
         defaults = {
@@ -30,49 +34,32 @@ class Main:
                     'Finnish': 'fi',
                     'English': 'en'
                 },
-                'default_option': 'Finnish',
+                'default_option': 'fi',
                 'selected_option': '',
             },
             'internal': {
-                'bot_name': 'SeduGPT', 
+                'bot_name': 'SeduGPT',
                 'user_name': '', # if empty, username will be set to OS username
                 'start_with_args': '--gui', # placeholder
             }
         }
 
-        translations = {
-            'UI': {
-                'English': {
-                    'en': 'English',
-                    'fi': 'Suomi',
-                }
-            },
-            'other': {
-
-            }
-        }
-        
-        
         # Import settings from a file
-        self.settings = Helpers().read_file(config.SETTINGS_FILE)
+        self.settings = self.Help.read_file(config.SETTINGS_FILE)
 
         # Import translations from a file
-        self.translations = Helpers().read_file(config.TRANSLATIONS_FILE)
+        self.translations = self.Help.read_file(config.TRANSLATIONS_FILE)
 
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
-
+        
         # Dynamic attribute creation
         self.set_settings_as_attributes()
         
         self.args = args
         
-        
-        
-        
-        
-
         self.initialize_modules()
+        
         
         if args == '--gui':
             # GUI
@@ -91,6 +78,15 @@ class Main:
             self.msg = args
             self.iterate_module_triggers()
            
+    def language(self):
+        
+        self.language = 'en'
+        
+        option, value = self.Help.get_selected_option('MAIN', 'language')
+  
+        if value:
+            self.language = value
+       
 
     def update_settings(self, module, defaults):
         '''Update the settings dictionary with new or renamed keys.'''
@@ -115,6 +111,14 @@ class Main:
             **{key: settings[key] for key in settings if key != 'MAIN'}
         }
 
+
+    def _get_selected(self, cfg):
+      
+        if selected := cfg['selected_option']:
+            return selected 
+        else:
+            return cfg['default_option']
+    
 
     def create_attribute(self, cfg, value):
         '''Create attributes and apply special functions/methods for certain settings.'''
@@ -162,33 +166,28 @@ class Main:
         for cat, contents in self.settings['MAIN'].items():
             if contents.get('interact_widget'):
                 # Create attributes from UI settings
-                if selected := contents['selected_option']:
-                    value = contents['options'][selected]
-                else:
-                    value = contents['options'][contents['default_option']]
+                value = self._get_selected(contents)
                 self.create_attribute(cat, value)
             else:
-                # Create attributes from non-UI settings (such as )
+                # Create attributes from non-UI settings (such as "internal")
                 for cfg, value in contents.items():
                     self.create_attribute(cfg, value)
 
 
     def open_settings_window(self):
         
-        self.cfgUI = SettingsUI(self.UI, self.settings)
-        
+        self.cfgUI = SettingsUI(self, self.settings)
         self.cfgUI.add_config_widgets()
-
         self.cfgUI.protocol("WM_DELETE_WINDOW", lambda: self.settings_window_closed())
-        
         self.cfgUI.mainloop()
 
 
 
     def settings_window_closed(self):
-        self.settings = self.cfgUI.settings
-        Helpers().save_file(config.SETTINGS_FILE, self.settings)
+        self.settings = self.cfgUI.settings_copy
+        self.Help.save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
+        self.set_settings_as_attributes()
 
     
     def initialize_modules(self):
@@ -197,11 +196,11 @@ class Main:
 
         for mod in config.MODULES:
             module = importlib.import_module(mod)
-            module_main_class = getattr(module, 'Module')()
-            module_name = module_main_class.get_module_name()
-            module_settings = module_main_class.get_settings()
+            module_main_class = getattr(module, 'Module')(self)
+            module_name = module_main_class.module_name
+            module_defaults = module_main_class.defaults
 
-            self.update_settings(module_name, module_settings)
+            self.update_settings(module_name, module_defaults)
             
             self.modules.append(module)
 
@@ -218,16 +217,12 @@ class Main:
 
         for module in self.modules:
             
-            config = None
-
             
-            self.current_mod = module.Module()
-            mod_name = self.current_mod.get_module_name()
-            
-            
+            self.current_mod = module.Module(self)
+            # mod_name = self.current_mod.get_module_name()
             
             # If triggered by user message, module returns a specific method, which is then called
-            if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
+            if module_func := self.current_mod.check_triggers(self.msg):
                 
                 triggered = True
                 
