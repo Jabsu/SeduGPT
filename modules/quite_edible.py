@@ -10,7 +10,12 @@ from helpers import Helpers
 
 class Module:
 
-    def __init__(self):
+    def __init__(self, parent):
+
+        self.Help = Helpers(self)
+        
+        # Default settings
+        self.defaults = self.get_defaults()
         
         # Regex trigger -> function
         self.triggers = {
@@ -19,9 +24,20 @@ class Module:
 
         # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
         self.re_flags = re.I
+        
+        # Module file name
+        self.module_name = self.Help.get_module_name()
+
+        # Get module settings from parent class
+        if cfg := parent.settings.get(self.module_name):
+            self.settings = cfg
+        else:
+            self.settings = self.defaults
+
+   
 
 
-    def get_settings(self):
+    def get_defaults(self):
         '''Return UI and/or other settings.'''
 
         settings = {
@@ -50,7 +66,7 @@ class Module:
                     "Sedu Ähtäri, Tuomarniementie":
                         "https://sedu.fi/kampus/sedu-ahtari-tuomarniementie/",
                 },
-                "default_option": "Sedu Seinäjoki, Suupohjantie",
+                "default_option": "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/",
                 "selected_option": "",
             },
             "language": {
@@ -99,14 +115,8 @@ class Module:
         '''If triggered by user message, return the specified function.'''
         
         self.msg = msg
-        self.settings, func = Helpers(self).check_triggers(user_defined_settings)
+        self.settings, func = self.Help.check_triggers(user_defined_settings)
         return func
-    
-    def get_module_name(self):
-        '''Get the module filename.'''
-        
-        return Helpers(self).get_module_name()
-       
     
     
     def start(self):
@@ -114,7 +124,6 @@ class Module:
 
         # Ignore non-food related listings
         self.ignore_entries = 'opiskeli|opetus'
-
 
         pattern = "maanantai|tiistai|keskiviikko|torstai|perjantai|lauantai|sunnuntai"
         
@@ -181,15 +190,10 @@ class Module:
     def get_menus(self):
         '''Get the menu for the week from a specified campus.'''
 
-        if selected := self.settings['campus']['selected_option']:
-            campus = self.settings['campus']['options'][selected]
-        else:
-            default = self.settings['campus']['default_option'] 
-            campus = self.settings['campus']['options'][default]
-
-        self.campus = campus    
+        option, value = self.Help.get_selected_option(self.module_name)
+        self.campus = value
         
-        r = requests.get(campus)
+        r = requests.get(self.campus)
         soup = bs(r.content, "html.parser")
         menu_data = soup.find("div", id="ruokalista")
 

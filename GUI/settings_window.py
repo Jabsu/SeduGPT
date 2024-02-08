@@ -26,7 +26,7 @@ class SettingsUI(Toplevel):
         self.settings_copy = settings
    
         width = self.main_window.winfo_reqwidth() / 2
-        height = self.main_window.winfo_reqheight() / 2
+        height = int(self.main_window.winfo_reqheight() / 1.25) 
 
         self.minsize(width, height)
 
@@ -138,13 +138,11 @@ class SettingsUI(Toplevel):
                  
 
                     list_of_options = []
-                    
                     options = {}
-                    
-                 
-                    selected = False
+                    selected_option = ""
 
                     for key, value in cfg['options'].items():
+                        
                         
                         trans = self.Tr.translate(key, self.from_to, mod)
                         options[trans] = value
@@ -172,8 +170,8 @@ class SettingsUI(Toplevel):
                         self.canvas,
                         values=list_of_options
                     )
-
-                    if selected:
+                
+                    if selected_option:
                         menu.set(selected_option)
 
                     cmd = (

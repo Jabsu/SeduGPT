@@ -10,7 +10,13 @@ from helpers import Helpers
 class Module:
     '''Obligatory weather inquiries. WORK IN PROGRESS; no functionality at the moment.'''
 
-    def __init__(self):
+    def __init__(self, parent):
+        
+        # Initialize Helpers class
+        self.Help = Helpers(self)
+        
+        # Default settings
+        self.defaults = self.get_defaults()
         
         self.triggers = {
             "(^| )sää( |$)": "start",
@@ -18,7 +24,17 @@ class Module:
         }
         self.re_flags = re.I
 
-    def get_settings(self):
+        # Module file name
+        self.module_name = self.Help.get_module_name()
+
+        # Get module settings from parent class
+        if cfg := parent.settings.get(self.module_name):
+            self.settings = cfg
+        else:
+            self.settings = self.defaults
+        
+
+    def get_defaults(self):
         '''Return UI and/or other settings.'''
         
         settings = {
@@ -28,19 +44,19 @@ class Module:
                 "options": {
                     "Seinäjoki": "100637219",
                 },
-                "default_option": "Seinäjoki",
+                "default_option": "100637219",
                 "selected_option": "",
             },
             "language": {
                 "label": "Language",
                 "interact_widget": "OptionMenu",
-                "interact_widget_disabled": False,
-                "sync_with_main": True,
+                "interact_widget_disabled": True,
+                "sync_with_main": False,
                 "options": {
                     'English': 'en',
                     'Finnish': 'fi',
                 },
-                "default_option": "en",
+                "default_option": "fi",
                 "selected_option": "",
             },
             "units": {
@@ -53,7 +69,7 @@ class Module:
                     "°F, mph": "us",
                     "°C, mph": "imperial"
                 },
-                "default_option": "°C, m/s",
+                "default_option": "metric",
                 "selected_option": "",
             }
         }
@@ -74,7 +90,7 @@ class Module:
         '''If triggered by user message, return the specified function.'''
         
         self.msg = msg
-        self.settings, func = Helpers(self).check_triggers(user_defined_settings)
+        self.settings, func = self.Help.check_triggers(user_defined_settings)
         return func
     
 

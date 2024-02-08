@@ -20,7 +20,10 @@ for mod in config.MODULES:
 class Main:
 
     def __init__(self, args):
-        '''Initialize the main program with important variables.'''
+        '''Initialize defaults, module configurations, etc.'''
+
+        self.Help = Helpers(self)
+        self.Tr = Translations()
         
         # Default settings (main)
         defaults = {
@@ -41,13 +44,11 @@ class Main:
             }
         }
 
-        self.Tr = Translations()
-
         # Import settings from a file
-        self.settings = Helpers().read_file(config.SETTINGS_FILE)
+        self.settings = self.Help.read_file(config.SETTINGS_FILE)
 
         # Import translations from a file
-        self.translations = Helpers().read_file(config.TRANSLATIONS_FILE)
+        self.translations = self.Help.read_file(config.TRANSLATIONS_FILE)
 
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
@@ -56,7 +57,7 @@ class Main:
         self.set_settings_as_attributes()
         
         self.args = args
-      
+        
         self.initialize_modules()
         
         
@@ -81,18 +82,11 @@ class Main:
         
         self.language = 'en'
         
-        lang_dict = self.settings['MAIN']['language']
-        if selected_lang := lang_dict['selected_option']:
-            pass
-        else:
-            selected_lang = lang_dict['default_option']
+        option, value = self.Help.get_selected_option('MAIN', 'language')
   
-        
-        for k, v in lang_dict['options'].items():
-            if selected_lang == v:
-                self.language = v
-     
-
+        if value:
+            self.language = value
+       
 
     def update_settings(self, module, defaults):
         '''Update the settings dictionary with new or renamed keys.'''
@@ -183,18 +177,15 @@ class Main:
     def open_settings_window(self):
         
         self.cfgUI = SettingsUI(self, self.settings)
-        
         self.cfgUI.add_config_widgets()
-
         self.cfgUI.protocol("WM_DELETE_WINDOW", lambda: self.settings_window_closed())
-        
         self.cfgUI.mainloop()
 
 
 
     def settings_window_closed(self):
         self.settings = self.cfgUI.settings_copy
-        Helpers().save_file(config.SETTINGS_FILE, self.settings)
+        self.Help.save_file(config.SETTINGS_FILE, self.settings)
         self.cfgUI.destroy()
         self.set_settings_as_attributes()
 
@@ -205,11 +196,11 @@ class Main:
 
         for mod in config.MODULES:
             module = importlib.import_module(mod)
-            module_main_class = getattr(module, 'Module')()
-            module_name = module_main_class.get_module_name()
-            module_settings = module_main_class.get_settings()
+            module_main_class = getattr(module, 'Module')(self)
+            module_name = module_main_class.module_name
+            module_defaults = module_main_class.defaults
 
-            self.update_settings(module_name, module_settings)
+            self.update_settings(module_name, module_defaults)
             
             self.modules.append(module)
 
@@ -226,16 +217,12 @@ class Main:
 
         for module in self.modules:
             
-            config = None
-
             
-            self.current_mod = module.Module()
-            mod_name = self.current_mod.get_module_name()
-            
-            
+            self.current_mod = module.Module(self)
+            # mod_name = self.current_mod.get_module_name()
             
             # If triggered by user message, module returns a specific method, which is then called
-            if module_func := self.current_mod.check_triggers(self.msg, self.settings[mod_name]):
+            if module_func := self.current_mod.check_triggers(self.msg):
                 
                 triggered = True
                 
