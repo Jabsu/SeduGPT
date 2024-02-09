@@ -187,7 +187,7 @@ class Module:
     def get_menus(self):
         '''Get the menu for the week from a specified campus.'''
 
-        option, value = self.Help.get_selected_option(self.module_name)
+        option, value = self.Help.get_selected_option('campus')
         self.campus = value
         
         r = requests.get(self.campus)

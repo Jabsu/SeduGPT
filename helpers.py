@@ -40,7 +40,7 @@ class Helpers:
         if user_defined_settings:
             return_settings = user_defined_settings
         else:
-            return_settings = self.parent.module_settings
+            return_settings = self.parent.settings
 
         return_func = None
         
@@ -51,11 +51,11 @@ class Helpers:
         return [return_settings, return_func]
     
 
-    def get_selected_option(self, module=str, category=str) -> tuple:
+    def get_selected_option(self, category=str) -> tuple:
         '''Returns the selected/default option and value for a setting.'''
 
-        cfg = self.parent.settings[module][category]
-        
+        cfg = self.parent.settings[category]
+
         selected_key = None
         selected_value = None
         
@@ -65,7 +65,7 @@ class Helpers:
         else:
             selected_value = cfg['default_option']
         
-        for key, value in cfg['options']:
+        for key, value in cfg['options'].items():
             if selected_value == value:
                 selected_key = key
 
