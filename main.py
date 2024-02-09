@@ -34,7 +34,7 @@ class Main:
                     'Finnish': 'fi',
                     'English': 'en'
                 },
-                'default_option': 'fi',
+                'default_option': 'en',
                 'selected_option': '',
             },
             'internal': {
@@ -199,8 +199,17 @@ class Main:
             module_main_class = getattr(module, 'Module')(self)
             module_name = module_main_class.module_name
             module_defaults = module_main_class.defaults
-
+            
             self.update_settings(module_name, module_defaults)
+            
+            try: 
+                dict = getattr(module_main_class, 'translations')
+            except AttributeError:
+                pass
+            else:
+                self.Tr.update_dictionary(module_name, dict)
+
+            
             
             self.modules.append(module)
 

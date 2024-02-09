@@ -32,6 +32,14 @@ class Module:
             self.settings = cfg
         else:
             self.settings = self.defaults
+
+        # Translations dictionary (optional)
+        self.translations = {
+            "fi-en": {
+                "Havaintoasema": "Observation station",
+                "Yksiköt": "Units"
+            }
+        }
         
 
     def get_defaults(self):
@@ -75,16 +83,7 @@ class Module:
         }
 
         return settings
-    
-    def get_translations(self):
-        '''Return translations.'''
 
-        translations = {
-            "fi-en": {
-                "Havaintoasema": "Observation station"
-            }
-        }
-        return translations
     
     def check_triggers(self, msg, user_defined_settings=None):
         '''If triggered by user message, return the specified function.'''

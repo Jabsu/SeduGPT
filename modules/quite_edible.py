@@ -34,6 +34,13 @@ class Module:
         else:
             self.settings = self.defaults
 
+        # Optional translations
+        self.translations = {
+            "fi-en": {
+                "Kampus": "Campus",
+            }
+        }
+
    
 
 
@@ -85,17 +92,7 @@ class Module:
 
         return settings
     
-    def get_translations(self):
-        '''Return translations.'''
 
-        translations = {
-            "fi-en": {
-                "Kampus": "Campus",
-            }
-        }
-        return translations
-   
-  
     def set_return_data(self, value, title=False):
         '''Preparing the output for Textbox.'''
         

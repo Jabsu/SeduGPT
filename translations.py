@@ -23,11 +23,14 @@ class Translations:
             self.dictionary.update(translations)
 
     
-    def update(self, translations):
+    def update_dictionary(self, module, translations):
         '''Update translations dictionary with the provided dictionary.'''
 
-        self.dictionary.update(translations)
 
+        dict = {module: translations}
+        self.dictionary.update(dict)
+
+        
 
     def translate(self, word=None, dict="en-fi", module="MAIN") -> str:
         '''Translate a word or a phrase.
@@ -36,12 +39,11 @@ class Translations:
         dict="en-fi")
         '''
         
-
+        
         origin, target = dict.split('-')
 
         if word == None or origin == target:
             return word
-        
         
         if not self.dictionary.get(module):
             # No dictionary found for provided module
@@ -55,10 +57,10 @@ class Translations:
                 word = pairs[word]
             except KeyError:
                 pass
-        elif reversed:
+        elif reversed and pairs:
             try:
                 # Reverse lookup
-                word = list(pairs.keys())[list(pairs.values()).index('d')]
+                word = list(pairs.keys())[list(pairs.values()).index(word)]
             except KeyError:
                 pass
 

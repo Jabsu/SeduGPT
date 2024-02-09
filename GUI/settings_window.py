@@ -127,9 +127,17 @@ class SettingsUI(Toplevel):
                 else:
                     mod = module
 
+                if l := self.settings[mod].get('language'):
+                    from_to = f"{l['default_option']}-{self.language}"
+                else:
+                    from_to = self.from_to
+
+                
+                
+
                 cfg_label = Label(
                     self.canvas, 
-                    text=self.Tr.translate(cfg['label'], self.from_to, mod),
+                    text=self.Tr.translate(cfg['label'], from_to, mod),
                     font=self.FONT,
                     )
                 cfg_label.grid(row=self.current_row, column=0, sticky='e', padx=(0,10))
@@ -144,7 +152,7 @@ class SettingsUI(Toplevel):
                     for key, value in cfg['options'].items():
                         
                         
-                        trans = self.Tr.translate(key, self.from_to, mod)
+                        trans = self.Tr.translate(key, from_to, mod)
                         options[trans] = value
 
                         try:
@@ -200,17 +208,3 @@ class SettingsUI(Toplevel):
         self.canvas.columnconfigure(1, weight=1)
         
         self.center_window()   
-        
-
-
-
-
-    '''
-    Layout:
-
-    MODUULIN NIMI
-    -------------
-    LABEL         WIDGET
-                + OPTIONAALINEN WIDGET
-                + OPTIONAALINEN WIDGET
-    '''
