@@ -12,9 +12,6 @@ class Module:
 
     def __init__(self, parent):
         
-        # Initialize Helpers class
-        self.Help = Helpers(self)
-        
         # Default settings
         self.defaults = self.get_defaults()
         
@@ -40,6 +37,12 @@ class Module:
                 "Yksiköt": "Units"
             }
         }
+        
+        # Initialize Helpers
+        self.Help = Helpers(self)
+
+        # Module file name
+        self.module_name = self.Help.get_module_name()
         
 
     def get_defaults(self):

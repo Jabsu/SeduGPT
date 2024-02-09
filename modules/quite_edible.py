@@ -12,7 +12,7 @@ class Module:
 
     def __init__(self, parent):
 
-        self.Help = Helpers(self)
+        
         
         # Default settings
         self.defaults = self.get_defaults()
@@ -25,8 +25,7 @@ class Module:
         # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
         self.re_flags = re.I
         
-        # Module file name
-        self.module_name = self.Help.get_module_name()
+
 
         # Get module settings from parent class
         if cfg := parent.settings.get(self.module_name):
@@ -40,6 +39,12 @@ class Module:
                 "Kampus": "Campus",
             }
         }
+
+        # Initialize Helpers
+        self.Help = Helpers(self)
+
+        # Module file name
+        self.module_name = self.Help.get_module_name()
 
    
 
