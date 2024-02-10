@@ -51,7 +51,7 @@ class Helpers:
         return [return_settings, return_func]
     
 
-    def get_selected_option(self, category=str, settings=dict) -> tuple:
+    def get_selected_option(self, category, settings) -> tuple:
         '''Returns the selected/default option and its value.'''
 
         cfg = settings[category]
