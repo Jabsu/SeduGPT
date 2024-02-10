@@ -51,10 +51,10 @@ class Helpers:
         return [return_settings, return_func]
     
 
-    def get_selected_option(self, category=str) -> tuple:
-        '''Returns the selected/default option and value for a setting.'''
+    def get_selected_option(self, category=str, settings=dict) -> tuple:
+        '''Returns the selected/default option and its value.'''
 
-        cfg = self.parent.settings[category]
+        cfg = settings[category]
 
         selected_key = None
         selected_value = None

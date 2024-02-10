@@ -25,14 +25,6 @@ class Module:
         # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
         self.re_flags = re.I
         
-
-
-        # Get module settings from parent class
-        if cfg := parent.settings.get(self.module_name):
-            self.settings = cfg
-        else:
-            self.settings = self.defaults
-
         # Optional translations
         self.translations = {
             "fi-en": {
@@ -43,10 +35,14 @@ class Module:
         # Initialize Helpers
         self.Help = Helpers(self)
 
-        # Module file name
+        # Get module file name
         self.module_name = self.Help.get_module_name()
 
-   
+        # Get module settings from parent class, if any
+        if cfg := parent.settings.get(self.module_name):
+            self.settings = cfg
+        else:
+            self.settings = self.defaults
 
 
     def get_defaults(self):
@@ -192,7 +188,7 @@ class Module:
     def get_menus(self):
         '''Get the menu for the week from a specified campus.'''
 
-        option, value = self.Help.get_selected_option('campus')
+        option, value = self.Help.get_selected_option('campus', self.settings)
         self.campus = value
         
         r = requests.get(self.campus)

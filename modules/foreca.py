@@ -15,20 +15,14 @@ class Module:
         # Default settings
         self.defaults = self.get_defaults()
         
+        # Regex trigger -> function
         self.triggers = {
             "(^| )sää( |$)": "start",
             "weather": "start",
         }
+        
+        # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
         self.re_flags = re.I
-
-        # Module file name
-        self.module_name = self.Help.get_module_name()
-
-        # Get module settings from parent class
-        if cfg := parent.settings.get(self.module_name):
-            self.settings = cfg
-        else:
-            self.settings = self.defaults
 
         # Translations dictionary (optional)
         self.translations = {
@@ -37,12 +31,19 @@ class Module:
                 "Yksiköt": "Units"
             }
         }
-        
+
         # Initialize Helpers
         self.Help = Helpers(self)
 
-        # Module file name
+        # Get module file name
         self.module_name = self.Help.get_module_name()
+
+        # Get module settings from parent class, if any
+        if cfg := parent.settings.get(self.module_name):
+            self.settings = cfg
+        else:
+            self.settings = self.defaults
+
         
 
     def get_defaults(self):
@@ -94,12 +95,6 @@ class Module:
         self.msg = msg
         self.settings, func = self.Help.check_triggers(user_defined_settings)
         return func
-    
-
-    def get_module_name(self):
-        '''Get the module filename.'''
-        
-        return Helpers(self).get_module_name()
     
 
     def start(self):
