@@ -19,7 +19,7 @@ class Module:
         
         # Regex trigger -> function
         self.triggers = {
-            "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|safka|pöperö|sapuska": "start",
+            "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|söimme|safka|pöperö|sapuska": "start",
         }
 
         # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
@@ -123,11 +123,12 @@ class Module:
         # Ignore non-food related listings
         self.ignore_entries = 'opiskeli|opetus'
 
-        pattern = "maanantai|tiistai|keskiviikko|torstai|perjantai|lauantai|sunnuntai"
+        pattern = "maanantai|tiistai|keskiviikk?o|torstai|perjantai|lauantai|sunnuntai"
         
         # Set the day of week to today or the one used as a parameter 
         if match := re.findall(pattern, self.msg, re.I):
-            self.weekday = match[0]
+            
+            self.weekday = match[0].replace('viiko', 'viikko')
         else:
             self.weekday = self.get_day()
         
@@ -249,7 +250,7 @@ class Module:
 
         # Make return data configurations
         if self.menu:
-            self.set_return_data(self.menu, title=f'\n{self.weekday.title()}n ruokalista:\n\n')
+            self.set_return_data(self.menu, title=f'\n{self.weekday.title().replace('viikko', 'viiko')}n ruokalista:\n\n')
         else:
             # No menu found
             self.set_return_data("Luvassa saattaa olla laihaa keittoa.")
