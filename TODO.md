@@ -49,7 +49,7 @@
     - [ ] Provide print method on helpers.py (if not defined by module)
 - [ ] Internal versioning (better late than never, I guess)
 - [ ] UI improvements
-    - [ ] Scrollbar for settings window ❗
+    - [x] Scrollbar for settings window
     - [ ] Support for configuration descriptions/tooltips
     - [ ] Support for Textbox tag config for modules
     - [ ] _About_ window
