@@ -12,12 +12,15 @@ from PIL import Image, ImageDraw, ImageFont
 class UI(Tk):
     def __init__(self, master=None):
         customtkinter.deactivate_automatic_dpi_awareness()
-        self.master = Tk.__init__(self, master)
+        customtkinter.set_appearance_mode("dark")
         
+        self.master = Tk.__init__(self, master)
         self.title(f"SeduGPT")
 
         width = self.winfo_screenwidth() / 2
         height = self.winfo_screenheight() / 2
+
+        self.resizable(False, False)
         
         self.CANVAS_COLOR = "#2C2C2C"
         self.CANVAS_WIDTH = width

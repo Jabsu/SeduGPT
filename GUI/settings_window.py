@@ -1,7 +1,7 @@
 from customtkinter import (CTk as Tk, CTkTextbox as Textbox, CTkEntry as Entry, CTkButton as Button, 
                            CTkScrollbar as Scrollbar, CTkCanvas as Canvas, CTkImage as ImageTk,
                            CTkLabel as Label, CTkOptionMenu as OptionMenu, CTkToplevel as Toplevel,
-                           StringVar)
+                           StringVar, CTkFrame as Frame)
 from tkinter import ttk
 import customtkinter
 
@@ -11,9 +11,9 @@ class SettingsUI(Toplevel):
 
     def __init__(self, parent, settings):
         customtkinter.deactivate_automatic_dpi_awareness()
+        customtkinter.set_appearance_mode("dark")
         super().__init__(parent.UI)
-
-        
+   
         self.main_window = parent.UI
         self.Tr = parent.Tr
 
@@ -26,7 +26,7 @@ class SettingsUI(Toplevel):
         self.settings_copy = settings
    
         width = self.main_window.winfo_reqwidth() / 2
-        height = int(self.main_window.winfo_reqheight() / 1.25) 
+        height = int(self.main_window.winfo_reqheight() / 1.5) 
 
         self.minsize(width, height)
 
@@ -34,8 +34,8 @@ class SettingsUI(Toplevel):
         self.grab_set()
         self.resizable(False, False)
         
-        self.configure(background='#2C2C2C')
-        
+        self.configure(fg_color='#2C2C2C')
+
         self.CANVAS_COLOR = "#2C2C2C"
         self.CANVAS_WIDTH = width
         self.CANVAS_HEIGHT = height
@@ -76,10 +76,19 @@ class SettingsUI(Toplevel):
             bg=self['bg'],
             highlightthickness=0,
         )
-        self.canvas.pack(fill='both', padx=20, pady=20)
-        self.scrollbar = Scrollbar(self.canvas)
+        self.frame = Frame(self.canvas)
+        self.scrollbar = Scrollbar(self, orientation="vertical", command=self.canvas.yview)
+        self.scrollbar.pack(side="right", fill="y")
+
+        self.canvas.pack(fill='both', padx=20, pady=20, expand=True)
+        self.canvas.create_window((4,4), window=self.frame, anchor="nw", tags="self")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.bind("<Configure>", self.onFrameConfigure)
     
-    
+    def onFrameConfigure(self, event):
+        
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
     def add_specific_config_widget(self):
         pass
 
@@ -106,14 +115,14 @@ class SettingsUI(Toplevel):
                 label_text = f"{self.Tr.translate('Module', self.from_to)}: {module}"
 
             module_label = Label(
-                self.canvas, 
+                self.frame, 
                 text=label_text,
                 text_color='white',
                 font=self.FONT_BOLD,
             )
             
             module_label.grid(row=self.current_row, column=0, sticky='w')
-            separator = ttk.Separator(self.canvas, orient='horizontal')
+            separator = ttk.Separator(self.frame, orient='horizontal')
             separator.grid(row=self.current_row+1, column=0, columnspan=2, sticky='ew', pady=(2,10))
             self.current_row += 2
             for cfg_name, cfg in configurations.items():
@@ -136,7 +145,7 @@ class SettingsUI(Toplevel):
                 
 
                 cfg_label = Label(
-                    self.canvas, 
+                    self.frame, 
                     text=self.Tr.translate(cfg['label'], from_to, mod),
                     font=self.FONT,
                     )
@@ -175,7 +184,7 @@ class SettingsUI(Toplevel):
                         list_of_options.append(value_name)
                    
                     menu = OptionMenu(
-                        self.canvas,
+                        self.frame,
                         values=list_of_options
                     )
                 
@@ -200,7 +209,7 @@ class SettingsUI(Toplevel):
                     
                 self.current_row += 1
             
-            Label(self.canvas, text="").grid(row=self.current_row, column=0)
+            Label(self.frame, text="").grid(row=self.current_row, column=0)
             self.current_row += 1
 
         
