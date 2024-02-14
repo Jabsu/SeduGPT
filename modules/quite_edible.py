@@ -250,7 +250,7 @@ class Module:
 
         # Make return data configurations
         if self.menu:
-            self.set_return_data(self.menu, title=f'\n{self.weekday.title().replace('viikko', 'viiko')}n ruokalista:\n\n')
+            self.set_return_data(self.menu, title=f'\n{self.weekday.title().replace("viikko", "viiko")}n ruokalista:\n\n')
         else:
             # No menu found
             self.set_return_data("Luvassa saattaa olla laihaa keittoa.")
