@@ -36,6 +36,7 @@
     - [x] Initial UI translations
     - [x] Main program translations
     - [x] Module-specific translations
+- [x] Create a testing utility for modules
 - [ ] Move the call methods for check_triggers and get_module_name from Module to Main
 - [ ] Logging
     - [ ] Configurations
@@ -44,7 +45,7 @@
             - [ ] Textbox
             - [ ] Console
 - [ ] Extended exception handling
-- [ ] Proper command line functionality ❗
+- [ ] Proper command line functionality
     - [ ] Parameter handling, default parameter(s)
     - [ ] Provide print method on helpers.py (if not defined by module)
 - [ ] Internal versioning (better late than never, I guess)
