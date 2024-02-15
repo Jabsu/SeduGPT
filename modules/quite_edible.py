@@ -17,7 +17,7 @@ class Module:
         # Default settings
         self.defaults = self.get_defaults()
         
-        # Regex trigger -> function
+        # Regex trigger -> method
         self.triggers = {
             "r(uu|uo)aksi|ruoka|murkina|syödään|syötiin|syömme|söimme|safka|pöperö|sapuska": "start",
         }
@@ -118,7 +118,7 @@ class Module:
     
     
     def start(self):
-        '''The module does it job.'''
+        '''The main method of this module, set to be called if the trigger conditions are met.'''
 
         # Ignore non-food related listings
         self.ignore_entries = 'opiskeli|opetus'

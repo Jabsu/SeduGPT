@@ -15,7 +15,7 @@ class Module:
         # Default settings
         self.defaults = self.get_defaults()
         
-        # Regex trigger -> function
+        # Regex trigger -> method
         self.triggers = {
             "(^| )sää( |$)": "start",
             "weather": "start",

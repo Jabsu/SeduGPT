@@ -44,7 +44,7 @@ class Test:
         print(f"\n{self.b}[Triggered]{self.e}\n")
 
         if method := self.module.check_triggers(self.message):
-            print(f"True; a method {self.i}{method}{self.e} was returned")
+            print(f"True; a method named {self.i}{method}{self.e} was returned")
             self.method = method
         else:
             print("False")
@@ -53,7 +53,7 @@ class Test:
     def test_3_method(self):
 
         if hasattr(self, 'method'):
-            print(f"\n{self.b}[Calling method {self.i}{self.method}]{self.e}\n")
+            print(f"\n{self.b}[Calling method '{self.method}']{self.e}\n")
             self.timer()
             try:
                 getattr(self.module, self.method)()
