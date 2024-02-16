@@ -1,6 +1,10 @@
 __pycache__
 .venv
 .vscode
+build
+dist
+output
 gpt4all
 *.bat
 *.json
+*.spec
