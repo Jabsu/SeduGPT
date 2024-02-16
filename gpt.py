@@ -39,9 +39,8 @@ class GPT:
                         print(f"Unable to create directory {path}.")
                         return None
                     print(f"Downloading GPT4All model \033[3m{model}\033[0m...")
-
-                else:
-                    print(f"Found GPT4All model \033[3m{config.GPT_MODEL}\033[0m! Initializing...")
+            else:
+                print(f"Found GPT4All model \033[3m{config.GPT_MODEL}\033[0m! Initializing...")
             try: 
                 self.gpt = GPT4All(config.GPT_MODEL, model_path=config.GPT_MODEL_PATH)
             except Exception as e:
