@@ -4,11 +4,11 @@ import importlib
 import time
 import os
 
-
 from GUI.main_window import UI
 from GUI.settings_window import SettingsUI
 from helpers import Helpers
 from translations import Translations
+from gpt import GPT
 
 import config
 
@@ -47,9 +47,6 @@ class Main:
         # Import settings from a file
         self.settings = self.Help.read_file(config.SETTINGS_FILE)
 
-        # Import translations from a file
-        self.translations = self.Help.read_file(config.TRANSLATIONS_FILE)
-
         # Update imported settings, if needed
         self.update_settings('MAIN', defaults)
         
@@ -60,6 +57,7 @@ class Main:
         
         self.initialize_modules()
         
+        self.GPT = GPT(self.user_name)
         
         if args == '--gui':
             # GUI
@@ -77,6 +75,10 @@ class Main:
         elif args:
             self.msg = args
             self.iterate_module_triggers()
+
+       
+
+
            
     def language(self):
         
@@ -171,7 +173,7 @@ class Main:
             else:
                 # Create attributes from non-UI settings (such as "internal")
                 for cfg, value in contents.items():
-                    self.create_attribute(cfg, value)
+                    self.create_attribute(cfg, value.replace("'", "\\'"))
 
 
     def open_settings_window(self):
@@ -301,6 +303,20 @@ class Main:
         
 
 
+
+    def random_output(self):
+        '''The user message did not trigger any module, display random output instead.'''
+
+        outputs = [
+            'Opettelen vielä, ymmärrän tuonnempana.',
+            'Pahus, menin ihan solmuun.',
+            'Pahoittelen, opettelen parhaillaan ymmärtämään toista asiaa.',
+            'Ymmärrän kyllä yskäsi, mutta en juuri muuta.',
+        ]
+        
+        return random.choice(outputs)
+            
+            
     def random_output(self):
         '''The user message did not trigger any module, display random output instead.'''
 
@@ -318,7 +334,7 @@ class Main:
         '''Bot's output to chat.'''
         
         if not triggered_by_module:
-            bot_msg = self.random_output()
+            bot_msg = self.GPT.generate(self.msg)
         else:
             bot_msg = self.current_mod.return_value
             
