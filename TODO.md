@@ -70,7 +70,7 @@
 - [x] GPT4All integration
     - [ ] Per session context memory
     - [ ] Module support
-- [ ] Async: Keep UI responsive during long processes
+- [x] Threading: Keep UI responsive during long processes
 
 
     

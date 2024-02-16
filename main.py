@@ -9,6 +9,7 @@ from GUI.settings_window import SettingsUI
 from helpers import Helpers
 from translations import Translations
 from gpt import GPT
+from messaging import Messaging
 
 import config
 
@@ -248,121 +249,11 @@ class Main:
 
     
     def send(self, event=None):
-        '''Add user input to chat (with formattings) and iterate through module triggers.'''
+        '''Start the message handler.'''
         
-        self.msg = self.UI.entry.get()
+        msg_handler = Messaging(self)
+        msg_handler.start()
         
-        if not self.msg:
-            return
-        
-        self.UI.entry.delete(0, 'end')
-        
-        self.send_prefix('user') 
-        self.UI.text_insert(self.msg+'\n', tag='msg')
-        
-        self.iterate_module_triggers()
-
-
-    def sanitize(self, content):
-        '''Convert List to String. 
-        
-        TO-DO: Other conversions.'''
-
-        ret = content
-
-        if type(content) == list:
-            # Use the separator defined in the module for joining the values
-            ret = self.current_mod.return_separator.join(content)
-
-        if type(content) == dict:
-            pass
-
-        return ret
-    
-
-    def send_prefix(self, user):
-        '''Format and send a prefix to chat (HH:MM <user>); tags (prefix, prefix2) point to colors
-        configured in main_window.py. 
-        
-        TO-DO: More dynamic/modular tag support.'''
-        
-        clock = time.strftime("%H:%M ")
-        self.UI.text_insert(clock, 'prefix')      
-        self.UI.text_insert('<', 'prefix2')
-     
-        if user == 'bot':
-            user_name = self.bot_name
-            self.UI.text_insert('@', 'prefix2')
-        else:
-            user_name = self.user_name
-            self.UI.text_insert('+', 'prefix2')
-
-        self.UI.text_insert(user_name, user)      
-        self.UI.text_insert('> ' , 'prefix2')
-
-        
-
-
-
-    def random_output(self):
-        '''The user message did not trigger any module, display random output instead.'''
-
-        outputs = [
-            'Opettelen vielä, ymmärrän tuonnempana.',
-            'Pahus, menin ihan solmuun.',
-            'Pahoittelen, opettelen parhaillaan ymmärtämään toista asiaa.',
-            'Ymmärrän kyllä yskäsi, mutta en juuri muuta.',
-        ]
-        
-        return random.choice(outputs)
-            
-            
-    def random_output(self):
-        '''The user message did not trigger any module, display random output instead.'''
-
-        outputs = [
-            'Opettelen vielä, ymmärrän tuonnempana.',
-            'Pahus, menin ihan solmuun.',
-            'Pahoittelen, opettelen parhaillaan ymmärtämään toista asiaa.',
-            'Ymmärrän kyllä yskäsi, mutta en juuri muuta.',
-        ]
-        
-        return random.choice(outputs)
-            
-    
-    def bot_output(self, triggered_by_module=False):
-        '''Bot's output to chat.'''
-        
-        if not triggered_by_module:
-            bot_msg = self.GPT.generate(self.msg)
-        else:
-            bot_msg = self.current_mod.return_value
-            
-            # If the return value set in a module is not String and 'sanitize' is set to True, 
-            # the value will be converted to String
-            if type(bot_msg) != 'str' and self.current_mod.return_sanitize:
-                bot_msg = self.sanitize(bot_msg)
-
-     
-        self.send_prefix('bot') 
-
-        if self.args != "--gui":
-            # Use the module's print method (if implemented) when not using the GUI
-            # TO-DO: Finalize the command line functionalities
-            try:
-                self.current_mod.print()
-            except:
-                print(f'{self.current_mod.get_module_name()} does not have a print method.')
-        else:
-            if triggered_by_module:
-                
-                # If set by module, add a title to the output
-                if title := self.current_mod.message_title:
-                    self.UI.text_insert(title, tag='title')
-                   
-            
-            self.UI.text_insert(bot_msg+'\n', tag='msg')
-            
 
 if __name__ == '__main__':
     
