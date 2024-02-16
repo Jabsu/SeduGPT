@@ -32,7 +32,7 @@ See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans a
     - Fun and useful modules might be integrated into the repository
 - Included modules
     - [quite_edible.py](): Gets the lunch menu from a selected campus
-        - **Finnish only**
+        - **FINNISH ONLY**
         - Triggers: Food related verbs/nouns (e.g. ruokana, syömme, syötiin, safka)
         - Parameters: The day of the week (e.g. keskiviikko(na))
         - Example sentences:
@@ -41,7 +41,12 @@ See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans a
                - Parameters like 'tänään', 'huomenna' and 'eilen' are not supported yet; if the weekday is not specified, the default is today
     - [foreca.py](): Obligatory weather inquiries – a chatbot is severely incomplete without such an important feature
         - **Work in progress**
-- In consideration: GPT integration (GPT4All)
+- GPT integration (GPT4All)
+    - Supported languages: English
+    - No module support as of yet
+    - Currently no context memory, not even per session
+    - Painfully slow when using mistral-7b-openorca (generating a reply takes almost a minute on i7-6700K)
+    - Why bother, you might ask? Well, obviously _because_!
 
 
 

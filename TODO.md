@@ -67,7 +67,13 @@
 - [ ] Wiki ❗
     - [ ] Module-specific information ❗
     - [ ] Guide and template class for 3rd party modules
-- [ ] Possibly: GPT4All integration
+- [x] GPT4All integration
+    - [ ] Per session context memory
+    - [ ] Module support
+- [ ] Async: Keep UI responsive during long processes
+
+
+    
 
 ### v1.0 — Gold
 - [ ] First release

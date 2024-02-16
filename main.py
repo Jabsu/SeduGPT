@@ -57,7 +57,6 @@ class Main:
         
         self.initialize_modules()
         
-        self.GPT = GPT(self.user_name)
         
         if args == '--gui':
             # GUI
@@ -65,7 +64,8 @@ class Main:
             self.UI.send_button.configure(command=lambda: self.send())
             self.UI.settings_button.configure(command=lambda: self.open_settings_window())
             self.UI.bind('<Return>', lambda event=None: self.send())
-        
+
+            self.GPT = GPT(self.user_name, self.UI.status)
             self.UI.mainloop()
 
         elif args == '--debug':

@@ -26,6 +26,8 @@ class UI(Tk):
         self.CANVAS_WIDTH = width
         self.CANVAS_HEIGHT = height
         
+        self.STATUS_COLOR = "#3a3a3a"
+
         self.BG_GRAY = "#ABB2B9"
         self.BG_COLOR = "#17202A"
         self.TEXT_COLOR = "#EAECEE"
@@ -39,6 +41,7 @@ class UI(Tk):
         self.FONT = ('Consolas', 14)
         self.FONT_BOLD = ('Consolas', 14, 'bold')
 
+        self.STATUS_FONT = ('Consolas', 13)
         self.LABEL_FONT = ('Helvetica', 20)
 
         self.SEPARATOR = "\n"
@@ -86,6 +89,17 @@ class UI(Tk):
        
         self.canvas.grid(row=1, column=0, padx=20, pady=(0,10))
 
+        self.status = Label(
+            self.master, 
+            text=" Topic of the day: SNAFU", 
+            bg_color=self.STATUS_COLOR, 
+            width=self.canvas.winfo_reqwidth(),
+            anchor="w",
+            font=self.STATUS_FONT
+        )
+        
+        self.status.grid(row=0, column=0, columnspan=1, pady=(20, 0))
+
         self.txt = Textbox(
             self.canvas, 
             wrap='word', 
@@ -99,7 +113,7 @@ class UI(Tk):
         )
 
         self.txt.pack(fill='both', expand=False)
-
+        
        
         self.txt.tag_config("prefix", foreground="#6f6f6f")
         self.txt.tag_config("prefix2", foreground="#909090")
@@ -108,11 +122,15 @@ class UI(Tk):
         self.txt.tag_config("user", foreground="#a1a1a1")
         self.txt.tag_config("bot", foreground="#fe65cb")
         
+        # self.canvas.create_window(0,0, window=self.status, anchor='nw')
         self.canvas.create_window(0,0, window=self.txt, anchor='nw')
 
         self.scrollbar = Scrollbar(self.txt)
         # self.scrollbar.place(relheight=1, relx=0.974)
         
+        
+        # self.status.grid(row=0, column=0, columnspan=2)
+
         self.entry = Entry(
             self.master, 
             placeholder_text="Kirjoita viesti...", 

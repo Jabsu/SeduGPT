@@ -2,6 +2,7 @@ import importlib
 import json
 import os
 import re
+import time
 
 class Helpers:
     '''Important helper methods for both Main and Module classes.'''
@@ -77,3 +78,16 @@ class Helpers:
         
         module = importlib.import_module(self.parent.__module__)
         return os.path.basename(module.__file__)
+    
+
+    def timer(self):
+        '''Timer, utilizing time.perf_counter(). First call: start, second call: stop.'''
+        
+        if hasattr(self, 'start'):
+            ret = time.perf_counter() - self.start
+            del self.start
+        else:
+            self.start = time.perf_counter()
+            ret = self.start
+        
+        return ret
