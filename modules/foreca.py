@@ -17,8 +17,8 @@ class Module:
         
         # Regex trigger -> method
         self.triggers = {
-            "(^| )sää( |$)": "start",
-            "weather": "start",
+            # "(^| )sää( |$)": "start",
+            # "weather": "start",
         }
         
         # Regex flags (re.I = ignore case, re.NOFLAG = no flags)
