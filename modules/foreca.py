@@ -56,8 +56,8 @@ class Module:
                 "options": {
                     "Seinäjoki": "100637219",
                 },
-                "default_option": "100637219",
-                "selected_option": "",
+                "default_value": "100637219",
+                "selected_value": "",
             },
             "language": {
                 "label": "Language",
@@ -68,8 +68,8 @@ class Module:
                     'English': 'en',
                     'Finnish': 'fi',
                 },
-                "default_option": "fi",
-                "selected_option": "",
+                "default_value": "fi",
+                "selected_value": "",
             },
             "units": {
                 "label": "Yksiköt",
@@ -81,8 +81,8 @@ class Module:
                     "°F, mph": "us",
                     "°C, mph": "imperial"
                 },
-                "default_option": "metric",
-                "selected_option": "",
+                "default_value": "metric",
+                "selected_value": "",
             }
         }
 
@@ -100,10 +100,10 @@ class Module:
     def start(self):
         url_prefix = "https://foreca.mobi/spot.php?l="
 
-        if selected := self.settings['station']['selected_option']:
+        if selected := self.settings['station']['selected_value']:
             station_number = self.settings['station']['options'][selected]
         else:
-            default = self.settings['station']['default_option'] 
+            default = self.settings['station']['default_value'] 
             station_number = self.settings['station']['options'][default]
 
         self.url = f"{url_prefix}{station_number}"

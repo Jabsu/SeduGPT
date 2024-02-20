@@ -52,7 +52,7 @@ class Helpers:
         return [return_settings, return_func]
     
 
-    def get_selected_option(self, category, settings) -> tuple:
+    def get_selected_value(self, category, settings) -> tuple:
         '''Returns the selected/default option and its value.'''
 
         cfg = settings[category]
@@ -61,10 +61,10 @@ class Helpers:
         selected_value = None
         
 
-        if selected_value := cfg['selected_option']:
+        if selected_value := cfg['selected_value']:
             pass
         else:
-            selected_value = cfg['default_option']
+            selected_value = cfg['default_value']
         
         for key, value in cfg['options'].items():
             if selected_value == value:

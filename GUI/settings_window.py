@@ -93,14 +93,14 @@ class SettingsUI(Toplevel):
         pass
 
     
-    def set_selected_option(self, selection, module, config_name, options=dict):
+    def set_selected_value(self, selection, module, config_name, options=dict):
         
         try:
             value = self.settings[module][config_name]['options'][selection]
         except KeyError:
             value = self.settings_copy[module][config_name]['options'][selection]
         
-        self.settings[module][config_name]['selected_option'] = value
+        self.settings[module][config_name]['selected_value'] = value
         
   
     def add_config_widgets(self):
@@ -137,7 +137,7 @@ class SettingsUI(Toplevel):
                     mod = module
 
                 if l := self.settings[mod].get('language'):
-                    from_to = f"{l['default_option']}-{self.language}"
+                    from_to = f"{l['default_value']}-{self.language}"
                 else:
                     from_to = self.from_to
 
@@ -154,9 +154,9 @@ class SettingsUI(Toplevel):
                 if cfg['interact_widget'] == 'OptionMenu': 
                  
 
-                    list_of_options = []
+                    list_of_values = []
                     options = {}
-                    selected_option = ""
+                    selected_value = ""
 
                     for key, value in cfg['options'].items():
                         
@@ -171,29 +171,29 @@ class SettingsUI(Toplevel):
                         
                         
 
-                        if selected := cfg['selected_option']:
+                        if selected := cfg['selected_value']:
                             pass
-                        elif selected := cfg['default_option']:
+                        elif selected := cfg['default_value']:
                             pass
                         if selected == value:
-                            selected_option = trans
+                            selected_value = trans
                     
                     self.settings_copy[module][cfg_name]['options'].update(options)
 
                     for value_name in options.keys():
-                        list_of_options.append(value_name)
+                        list_of_values.append(value_name)
                    
                     menu = OptionMenu(
                         self.frame,
-                        values=list_of_options
+                        values=list_of_values
                     )
                 
-                    if selected_option:
-                        menu.set(selected_option)
+                    if selected_value:
+                        menu.set(selected_value)
 
                     cmd = (
                         f"menu.configure( \
-                            command=lambda selection: self.set_selected_option( \
+                            command=lambda selection: self.set_selected_value( \
                                 selection, '{module}', '{cfg_name}', {options} \
                             ) \
                         )" 

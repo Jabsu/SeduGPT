@@ -74,8 +74,8 @@ class Module:
                     "Sedu Ähtäri, Tuomarniementie":
                         "https://sedu.fi/kampus/sedu-ahtari-tuomarniementie/",
                 },
-                "default_option": "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/",
-                "selected_option": "",
+                "default_value": "https://sedu.fi/kampus/sedu-seinajoki-suupohjantie/",
+                "selected_value": "",
             },
             "language": {
                 "label": "Language",
@@ -86,8 +86,8 @@ class Module:
                     'English': 'en',
                     'Finnish': 'fi',
                 },
-                "default_option": "fi",
-                "selected_option": "",
+                "default_value": "fi",
+                "selected_value": "",
             },
         }
 
@@ -189,7 +189,7 @@ class Module:
     def get_menus(self):
         '''Get the menu for the week from a specified campus.'''
 
-        option, value = self.Help.get_selected_option('campus', self.settings)
+        option, value = self.Help.get_selected_value('campus', self.settings)
         self.campus = value
         
         r = requests.get(self.campus)

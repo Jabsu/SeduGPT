@@ -28,6 +28,18 @@ class Main:
         
         # Default settings (main)
         defaults = {
+#            'settings_file': {
+#                'label': 'Settings file location',
+#                'interact_widget': 'Combobox',
+#                'default_value': './settings.json',
+#                'selected_value': '',
+#                'extra_widget': {
+#                    'label': '...',
+#                    'interact_widget': 'Button',
+#                    'function': 'filedialog',
+#                    'modify_value_of': 'selected_value',
+#                }
+#             },
             'language': {
                 'label': 'Language',
                 'interact_widget': 'OptionMenu',
@@ -35,9 +47,48 @@ class Main:
                     'Finnish': 'fi',
                     'English': 'en'
                 },
-                'default_option': 'en',
-                'selected_option': '',
+                'default_value': 'en',
+                'selected_value': '',
             },
+#            'gpt_model': {
+#                'label': 'GPT model',
+#                'interact_widget': 'Combobox',
+#                'options': [
+#                    'mistral-7b-openorca.Q4_0.gguf',
+#                    'mistral-7b-instruct-v0.1.Q4_0.gguf',
+#                    'gpt4all-falcon-newbpe-q4_0.gguf',
+#                    'orca-2-7b.Q4_0.gguf',
+#                    'wizardlm-13b-v1.2.Q4_0.gguf',
+#                ],
+#                'default_value': 'mistral-7b-openorca.Q4_0.gguf',
+#                'selected_value': '',
+#            },
+#            'gpt_model_path': {
+#                'label': 'GPT model path',
+#                'interact_widget': 'Combobox',
+#                'default_value': './GPT4All',
+#                'selected_value': '',
+#                'extra_widget': {
+#                    'label': '...',
+#                    'interact_widget': 'Button',
+#                    'function': 'filedialog',
+#                    'modify_value_of': 'gpt_model_path', 
+#                },
+#            'gpt_model_device': {
+#                'label': 'GPT model device',
+#                'interact_widget': 'OptionMenu',
+#                'options': {
+#                    'CPU': 'cpu',
+#                    'GPU': 'gpu',
+#                    'AMD (non-default GPU)': 'amd',
+#                    'Intel (non-default GPU)': 'intel',
+#                    'NVIDIA (non-default GPU)': 'nvidia',
+#                },
+#                'default_value': 'cpu',
+#
+#            }
+#
+#            },
             'internal': {
                 'bot_name': 'SeduGPT',
                 'user_name': '', # if empty, username will be set to OS username
@@ -85,7 +136,7 @@ class Main:
         
         self.language = 'en'
         
-        option, value = self.Help.get_selected_option('MAIN', 'language')
+        option, value = self.Help.get_selected_value('MAIN', 'language')
   
         if value:
             self.language = value
@@ -117,10 +168,10 @@ class Main:
 
     def _get_selected(self, cfg):
       
-        if selected := cfg['selected_option']:
+        if selected := cfg['selected_value']:
             return selected 
         else:
-            return cfg['default_option']
+            return cfg['default_value']
     
 
     def create_attribute(self, cfg, value):
