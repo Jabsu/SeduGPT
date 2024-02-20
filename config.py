@@ -21,7 +21,7 @@ GPT_MODEL = 'mistral-7b-openorca.Q4_0.gguf'
 
 # The processing unit on which the GPT4All model will run
 # Options: 'cpu', 'gpu', 'amd', 'intel', 'nvidia'
-GPT_MODEL_DEVICE = 'gpu'
+GPT_MODEL_DEVICE = 'cpu'
 
 # GPT4All model location
 GPT_MODEL_PATH= './gpt4all'
