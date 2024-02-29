@@ -5,6 +5,8 @@ SeduGPT aims to:
 - _Theoretically_ encourage programming students to practice with Python by making modules  
 - Engage students – or at least myself – in the fine art of tomfoolery
 
+###### Human-made™ — Original, not artificial
+</br>
 
 ```  
 -===[ 𝐏𝐫𝐨𝐣𝐞𝐜𝐭 𝐒𝐭𝐚𝐭𝐮𝐬 ]===-
