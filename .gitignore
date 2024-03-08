@@ -5,6 +5,7 @@ build
 dist
 output
 gpt4all
+config.py
 *.bat
 *.json
 *.spec

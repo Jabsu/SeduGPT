@@ -52,23 +52,51 @@ class Helpers:
         return [return_settings, return_func]
     
 
+    def convert_to_dict(self, items) -> dict:
+            '''Convert list object to dict object (where key name equals value name).'''
+
+            ret = {}
+            
+            if type(items) == list:
+                for item in items:
+                    ret[item] = item
+            else:
+                print(f"convert_to_dict(): Conversion not supported: {type(items).__name__} -> dict")
+            
+            return ret
+
     def get_selected_value(self, category, settings) -> tuple:
-        '''Returns the selected/default option and its value.'''
+        '''Returns a selected/default option and its value from provided settings dict.'''
 
-        cfg = settings[category]
-
+        if cfg := settings.get(category):
+            pass
+        else: 
+            print(f"get_selected_value(): Provided settings do not have '{category}' category")
+            print(f"Provided settings: {settings}")
+            return (None, None)
+    
         selected_key = None
         selected_value = None
         
-
-        if selected_value := cfg['selected_value']:
+        if options := cfg.get('options'):
             pass
         else:
-            selected_value = cfg['default_value']
+            options = {}
+
+        if selected_value := cfg.get('selected_value'):
+            pass
+        else:
+            selected_value = cfg.get('default_value')
         
-        for key, value in cfg['options'].items():
-            if selected_value == value:
-                selected_key = key
+        
+        if options:
+            if type(options) == list:
+                options = self.convert_to_dict(options)
+            
+            for key, value in options.items():
+                if selected_value == value:
+                    selected_key = key
+            
 
         return (selected_key, selected_value) 
 

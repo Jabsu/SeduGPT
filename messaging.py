@@ -1,23 +1,22 @@
 import time
 import threading
 
-
 class Messaging(threading.Thread):
     def __init__(self, parent):
         threading.Thread.__init__(self)
         self.parent = parent
-
+        self.settings = parent.settings
 
     def run(self):
-        self.parent.msg = self.parent.UI.entry.get()
+        self.msg = self.parent.UI.entry.get()
         
-        if not self.parent.msg:
+        if not self.msg:
             return
         
         self.parent.UI.entry.delete(0, 'end')
         
         self.send_prefix('user') 
-        self.parent.UI.text_insert(self.parent.msg+'\n', tag='msg')
+        self.parent.UI.text_insert(self.msg+'\n', tag='msg')
         
         self.iterate_module_triggers()
 
@@ -31,14 +30,14 @@ class Messaging(threading.Thread):
         
         triggered = False
 
-        for module in self.parent.modules:
+        for module in self.parent.module_instances:
             
             
             self.current_mod = module.Module(self.parent)
             # mod_name = self.current_mod.get_module_name()
             
             # If triggered by user message, module returns a specific method, which is then called
-            if module_func := self.current_mod.check_triggers(self.parent.msg):
+            if module_func := self.current_mod.check_triggers(self.msg):
                 
                 triggered = True
                 
@@ -80,7 +79,7 @@ class Messaging(threading.Thread):
         self.parent.UI.text_insert('<', 'prefix2')
      
         if user == 'bot':
-            user_name = self.parent.bot_name
+            user_name = self.parent.name
             self.parent.UI.text_insert('@', 'prefix2')
         else:
             user_name = self.parent.user_name
@@ -94,7 +93,7 @@ class Messaging(threading.Thread):
         '''Bot's output to chat.'''
         
         if not triggered_by_module:
-            bot_msg = self.parent.GPT.generate(self.parent.msg)
+            bot_msg = self.parent.GPT.generate(self.msg)
         else:
             bot_msg = self.current_mod.return_value
             

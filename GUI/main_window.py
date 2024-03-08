@@ -133,7 +133,7 @@ class UI(Tk):
 
         self.entry = Entry(
             self.master, 
-            placeholder_text="Kirjoita viesti...", 
+            placeholder_text="Type a message...", 
             fg_color=self.ENTRY_FG, 
             text_color=self.ENTRY_TEXT_COLOR, 
             font=self.FONT,

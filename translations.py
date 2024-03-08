@@ -7,6 +7,7 @@ class Translations:
             'MAIN': {
                 'en-fi': {
                     'Main Settings': 'Pääasetukset',
+                    'Settings File': 'Asetustiedosto',
                     'Settings': 'Asetukset',
                     'Language': 'Kieli',
                     'English': 'Englanti',

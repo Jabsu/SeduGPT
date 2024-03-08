@@ -45,10 +45,9 @@
 - [x] GPT4All integration
     - [ ] Per session context memory ❗
     - [ ] Module support ❗
-- [ ] Make config.py redundant ❗
-    - [ ] Make module importing configurable on the UI
-    - [ ] Make settings.json location configurable on the UI
-    - [ ] Make GPT4All settings configurable on the UI
+- [x] Make config.py redundant ❗
+    - [x] Make module importing configurable on the UI
+    - [x] Make GPT4All settings configurable on the UI
         - [ ] Add progress bar for model download
 
 ### v0.9 — Electrum
