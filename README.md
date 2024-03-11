@@ -53,5 +53,4 @@ See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans a
 ### Installation  
 1. Install Python 3.8+ (recommended: 3.12+)
 2. Install the required libraries: `pip install -U -r requirements.txt`
-3. Take a quick glance at config.py (this file will be redundant soon)
-4. Launch main.py and have some semblance of fun!
+3. Launch main.py and have some semblance of fun!
