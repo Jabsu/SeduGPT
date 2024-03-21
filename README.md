@@ -30,9 +30,9 @@ See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans a
         - Work in progress
     - Easily add user interface configurations (with labels and interactive widgets) by using a dict
         - All modules have a common settings window on which the widgets will show up
-        - Currently supported interactive widgets: Tk.OptionMenu 
     - Detailed instructions for module development coming soon
     - Fun and useful modules might be integrated into the repository
+    - See [wiki](https://github.com/Jabsu/SeduGPT/wiki) for module creation instructions
 - Included modules
     - [quite_edible.py](): Gets the lunch menu from a selected campus
         - **FINNISH ONLY**
