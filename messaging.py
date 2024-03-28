@@ -44,7 +44,7 @@ class Messaging(threading.Thread):
                 func = getattr(self.current_mod, module_func)
                 func()
                 
-                self.bot_output(True)
+                self.bot_output(True, module_func)
 
         if not triggered:
             # Not triggered by any module; bot outputs the default text
@@ -89,19 +89,33 @@ class Messaging(threading.Thread):
         self.parent.UI.text_insert('> ' , 'prefix2')
 
     
-    def bot_output(self, triggered_by_module=False):
+    def bot_output(self, triggered_by_module=False, module_func=None):
         '''Bot's output to chat.'''
         
-        if not triggered_by_module:
-            bot_msg = self.parent.GPT.generate(self.msg)
-        else:
-            bot_msg = self.current_mod.return_value
-            
+        instr = None
+        mod = None
+        msg = None
+
+        def predefined_msg():
+            ret = self.current_mod.return_value
+            if type(ret) != 'str' and self.current_mod.return_sanitize:
+                ret = self.sanitize(ret)
+            return ret
+        
+        if triggered_by_module:
             # If the return value set in a module is not String and 'sanitize' is set to True, 
             # the value will be converted to String
-            if type(bot_msg) != 'str' and self.current_mod.return_sanitize:
-                bot_msg = self.sanitize(bot_msg)
+            if hasattr(self.current_mod, 'gpt_instructions'):
+                instr = getattr(self.current_mod, 'gpt_instructions')[module_func]
+                msg = predefined_msg()
 
+
+        if triggered_by_module and not instr:
+            bot_msg = predefined_msg()
+        else:
+            bot_msg = self.parent.GPT.generate(self.msg, instr, msg)
+            
+           
      
         self.send_prefix('bot') 
 

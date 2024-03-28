@@ -44,7 +44,7 @@
 - [x] Scrollbar for settings window
 - [x] GPT4All integration
     - [ ] Per session context memory ❗
-    - [ ] Module support ❗
+    - [x] Module support
 - [x] Make config.py redundant ❗
     - [x] Make module importing configurable on the UI
     - [x] Make GPT4All settings configurable on the UI

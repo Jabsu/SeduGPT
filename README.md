@@ -45,7 +45,6 @@ See [TODO.md](https://github.com/Jabsu/SeduGPT/blob/main/TODO.md) for my plans a
         - **Work in progress**, no functionality as of yet
 - GPT integration (GPT4All)
     - Supported languages: English
-    - Module support coming soon!
     - Session based context memory coming soon!
     
 
