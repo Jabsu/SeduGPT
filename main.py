@@ -13,11 +13,6 @@ from messaging import Messaging
 
 from tkinter.messagebox import showinfo
 
-# Import modules
-#for mod in config.MODULES:
-#   importlib.import_module(mod)
-
-
 class Main:
 
     def __init__(self, args):
@@ -66,11 +61,12 @@ class Main:
             # self.msg = args
             # msg_handler = Messaging(self)
             # msg_handler.start()
-
-       
-    def get_defaults(self):
-        # Return default settings
         
+    
+    def list_module_files(self) -> dict:
+        '''Return a list of module files.'''
+
+        files = {}
         try:
             files = {f: 1 for f in os.listdir("modules") if os.path.isfile(os.path.join("./modules", f))}
         except FileNotFoundError:
@@ -79,12 +75,17 @@ class Main:
         else:
             if not files:
                 print("No modules found in 'modules' directory.")
+        return files
 
+       
+    def get_defaults(self) -> dict:
+        '''Return default settings.'''
+        
         settings = {
             'modules': {
                 'label': 'Modules',
                 'interact_widget': 'Checkbox',
-                'options': files,
+                'options': self.list_module_files(),
             },
             'user_name': {
                 'label': 'Username',
@@ -176,7 +177,7 @@ class Main:
 
 
     def update_settings(self, module, defaults):
-        '''Update the settings dictionary with new or renamed keys.'''
+        '''Update the settings dictionary with new or renamed keys and values.'''
               
         settings = self.settings
         
@@ -189,8 +190,9 @@ class Main:
                 settings[module][container] = defaults[container]
 
             for cfg, value in cfgs.items():
-                if not settings[module][container].get(cfg):
+                if cfg != 'selected_value':
                     settings[module][container][cfg] = value
+
 
         # Finally, rearrange the dict so that it starts with the 'MAIN' key
         self.settings = {
