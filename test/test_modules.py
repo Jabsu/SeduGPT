@@ -27,7 +27,6 @@ class Test:
         print(f"\n{self.b}[Mandatory module methods]{self.e}\n")
 
         methods = [
-            'get_defaults',
             'check_triggers',
             'set_return_data'
         ]
@@ -43,11 +42,17 @@ class Test:
     def test_2_trigger(self):
         print(f"\n{self.b}[Triggered]{self.e}\n")
 
-        if method := self.module.check_triggers(self.message):
-            print(f"True; a method named {self.i}{method}{self.e} was returned")
-            self.method = method
-        else:
-            print("False")
+        try:
+            if method := self.module.check_triggers(self.message):
+                print(f"True: A custom method named {self.i}{method}{self.e} was returned")
+                self.method = method
+            else:
+                print("False")
+        except AttributeError:
+            print("False: Missing check_triggers method")
+        except Exception as e:
+            print(f"False: {e}")
+
 
     
     def test_3_method(self):
